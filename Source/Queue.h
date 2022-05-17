@@ -59,7 +59,7 @@ int pop_front(struct Queue* queue) {
     return front_key;
 }
 
-// Obtem valor do elemento na frente da Fila
+// Obtem a quantidade de elementos na Fila
 int size(struct Queue* queue) {
     return queue->size;
 }
