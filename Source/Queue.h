@@ -1,27 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "Process.h"
  
-struct QueueElement {
-    int key;
-    struct QueueElement* next;
-};
+typedef struct _QueueElement {
+    Processo* processo;
+    struct _QueueElement* next;
+} QueueElement;
  
-struct Queue {
+typedef struct _Queue {
     int size;
-    struct QueueElement *front, *back;
-};
+    QueueElement *front, *back;
+} Queue;
  
 // Cria um novo elemento da Fila
-struct QueueElement* newElement(int val) {
-    struct QueueElement* elem = (struct QueueElement*) malloc( sizeof(struct QueueElement) );
+QueueElement* newElement(Processo* val) {
+    QueueElement* elem = (QueueElement*) malloc( sizeof(QueueElement) );
     elem->next = NULL;
     elem->key = val;
     return elem;
 }
  
 // Cria e inicializa uma nova Fila vazia
-struct Queue* createQueue() {
-    struct Queue* newQueue = (struct Queue*) malloc( sizeof(struct Queue) );
+Queue* createQueue() {
+    Queue* newQueue = (Queue*) malloc( sizeof(Queue) );
     newQueue->front = NULL;
     newQueue->back = NULL;
     newQueue->size = 0;
@@ -29,8 +30,8 @@ struct Queue* createQueue() {
 }
  
 // Adiciona um novo elemento no fim da Fila
-void push_back(struct Queue* queue, int val) {
-    struct QueueElement* elem = newElement(val);
+void push_back(Queue* queue, Processo* val) {
+    QueueElement* elem = newElement(val);
  
     if (queue->back == NULL) {
         queue->front = elem;
@@ -43,30 +44,29 @@ void push_back(struct Queue* queue, int val) {
 }
  
 // Remove um elemento do inicio da Fila
-int pop_front(struct Queue* queue) {
+Processo* pop_front(Queue* queue) {
     if (queue->front == NULL)
         return -1;
 
-    int front_key = queue->front->key;
+    Processo* front_key = queue->front->key;
  
-    struct QueueElement* aux = queue->front;
+    QueueElement* aux = queue->front;
     queue->front = queue->front->next;
-    
+
     if (queue->front == NULL)
         queue->back = NULL;
 
     queue->size -= 1;
-    free(aux);
     return front_key;
 }
 
 // Obtem a quantidade de elementos na Fila
-int size(struct Queue* queue) {
+int size(Queue* queue) {
     return queue->size;
 }
 
 // Obtem valor do elemento na frente da Fila
-int front(struct Queue* queue) {
+Processo* front(Queue* queue) {
     if (size(queue) == 0)
         return -1;
     else
@@ -74,7 +74,7 @@ int front(struct Queue* queue) {
 }
  
 // Obtem valor do elemento no fim da Fila
-int back(struct Queue* queue) {
+Processo* back(Queue* queue) {
     if (size(queue) == 0) 
         return -1;
     else

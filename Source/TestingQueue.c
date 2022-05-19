@@ -2,7 +2,7 @@
 #include "Queue.h"
 
 int main() {
-    struct Queue* q = createQueue();
+    Queue* q = createQueue();
 
     push_back(q, 10);
     push_back(q, 20);
