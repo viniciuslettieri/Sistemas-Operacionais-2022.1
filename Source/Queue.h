@@ -21,8 +21,9 @@ struct QueueElement* newElement(int val) {
  
 // Cria e inicializa uma nova Fila vazia
 struct Queue* createQueue() {
-    struct Queue* newQueue = (struct Queue*) malloc(sizeof(struct Queue));
-    newQueue->front = newQueue->back = NULL;
+    struct Queue* newQueue = (struct Queue*) malloc( sizeof(struct Queue) );
+    newQueue->front = NULL;
+    newQueue->back = NULL;
     newQueue->size = 0;
     return newQueue;
 }
@@ -32,7 +33,8 @@ void push_back(struct Queue* queue, int val) {
     struct QueueElement* elem = newElement(val);
  
     if (queue->back == NULL) {
-        queue->front = queue->back = elem;
+        queue->front = elem;
+        queue->back = elem;
     }else{
         queue->back->next = elem;
         queue->back = elem;
@@ -49,12 +51,11 @@ int pop_front(struct Queue* queue) {
  
     struct QueueElement* aux = queue->front;
     queue->front = queue->front->next;
- 
+    
     if (queue->front == NULL)
         queue->back = NULL;
 
     queue->size -= 1;
- 
     free(aux);
     return front_key;
 }
