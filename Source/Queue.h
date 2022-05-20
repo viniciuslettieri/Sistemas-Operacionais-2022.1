@@ -1,82 +1,82 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Process.h"
+#include "Processo.h"
  
-typedef struct _QueueElement {
+typedef struct _ElementoFila {
     Processo* processo;
-    struct _QueueElement* next;
-} QueueElement;
+    struct _ElementoFila* prox;
+} ElementoFila;
  
-typedef struct _Queue {
-    int size;
-    QueueElement *front, *back;
-} Queue;
+typedef struct _Fila {
+    int tam;
+    ElementoFila *frente, *verso;
+} Fila;
  
 // Cria um novo elemento da Fila
-QueueElement* newElement(Processo* val) {
-    QueueElement* elem = (QueueElement*) malloc( sizeof(QueueElement) );
-    elem->next = NULL;
-    elem->key = val;
+ElementoFila* novoElemento(Processo* processo) {
+    ElementoFila* elem = (ElementoFila*) malloc( sizeof(ElementoFila) );
+    elem->prox = NULL;
+    elem->processo = processo;
     return elem;
 }
  
 // Cria e inicializa uma nova Fila vazia
-Queue* createQueue() {
-    Queue* newQueue = (Queue*) malloc( sizeof(Queue) );
-    newQueue->front = NULL;
-    newQueue->back = NULL;
-    newQueue->size = 0;
-    return newQueue;
+Fila* criaFila() {
+    Fila* novaFila = (Fila*) malloc( sizeof(Fila) );
+    novaFila->frente = NULL;
+    novaFila->verso = NULL;
+    novaFila->tam = 0;
+    return novaFila;
 }
  
 // Adiciona um novo elemento no fim da Fila
-void push_back(Queue* queue, Processo* val) {
-    QueueElement* elem = newElement(val);
+void insereVerso(Fila* fila, Processo* processo) {
+    ElementoFila* elem = novoElemento(processo);
  
-    if (queue->back == NULL) {
-        queue->front = elem;
-        queue->back = elem;
+    if (fila->verso == NULL) {
+        fila->frente = elem;
+        fila->verso = elem;
     }else{
-        queue->back->next = elem;
-        queue->back = elem;
+        fila->verso->prox = elem;
+        fila->verso = elem;
     }
-    queue->size += 1;
+    fila->tam += 1;
 }
  
 // Remove um elemento do inicio da Fila
-Processo* pop_front(Queue* queue) {
-    if (queue->front == NULL)
+Processo* removeFrente(Fila* fila) {
+    if (fila->frente == NULL)
         return -1;
 
-    Processo* front_key = queue->front->key;
+    Processo* frente_processo = fila->frente->processo;
  
-    QueueElement* aux = queue->front;
-    queue->front = queue->front->next;
+    ElementoFila* aux = fila->frente;
+    fila->frente = fila->frente->prox;
 
-    if (queue->front == NULL)
-        queue->back = NULL;
+    if (fila->frente == NULL)
+        fila->verso = NULL;
 
-    queue->size -= 1;
-    return front_key;
+    fila->tam -= 1;
+    return frente_processo;
 }
 
 // Obtem a quantidade de elementos na Fila
-int size(Queue* queue) {
-    return queue->size;
+int tam(Fila* fila) {
+    return fila->tam;
 }
 
 // Obtem valor do elemento na frente da Fila
-Processo* front(Queue* queue) {
-    if (size(queue) == 0)
+Processo* frente(Fila* fila) {
+    if (tam(fila) == 0)
         return -1;
     else
-        return queue->front->key;
+        return fila->frente->processo;
 }
  
 // Obtem valor do elemento no fim da Fila
-Processo* back(Queue* queue) {
-    if (size(queue) == 0) 
+Processo* verso(Fila* fila) {
+    if (tam(fila) == 0) 
         return -1;
     else
-        return queue->back->key;
+        return fila->verso->processo;
 }

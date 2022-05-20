@@ -2,35 +2,35 @@
 #include "Queue.h"
 
 int main() {
-    Queue* q = createQueue();
+    Fila* q = criaFila();
 
-    push_back(q, 10);
-    push_back(q, 20);
+    insereVerso(q, 10);
+    insereVerso(q, 20);
 
-    printf("Queue Size: %d \n", size(q));
-    printf("Queue Front : %d \n", front(q));
-    printf("Queue Rear : %d \n", back(q));
+    printf("Queue Size: %d \n", tam(q));
+    printf("Queue Front : %d \n", frente(q));
+    printf("Queue Rear : %d \n", verso(q));
 
-    pop_front(q);
-    pop_front(q);
+    removeFrente(q);
+    removeFrente(q);
 
-    printf("Queue Size: %d \n", size(q));
-    printf("Queue Front : %d \n", front(q));
-    printf("Queue Rear : %d \n", back(q));
+    printf("Queue Size: %d \n", tam(q));
+    printf("Queue Front : %d \n", frente(q));
+    printf("Queue Rear : %d \n", verso(q));
 
-    push_back(q, 30);
-    push_back(q, 40);
-    push_back(q, 50);
+    insereVerso(q, 30);
+    insereVerso(q, 40);
+    insereVerso(q, 50);
 
-    printf("Queue Size: %d \n", size(q));
-    printf("Queue Front : %d \n", front(q));
-    printf("Queue Rear : %d \n", back(q));
+    printf("Queue Size: %d \n", tam(q));
+    printf("Queue Front : %d \n", frente(q));
+    printf("Queue Rear : %d \n", verso(q));
 
-    pop_front(q);
+    removeFrente(q);
 
-    printf("Queue Size: %d \n", size(q));
-    printf("Queue Front : %d \n", front(q));
-    printf("Queue Rear : %d \n", back(q));
+    printf("Queue Size: %d \n", tam(q));
+    printf("Queue Front : %d \n", frente(q));
+    printf("Queue Rear : %d \n", verso(q));
 
     return 0;
 }
