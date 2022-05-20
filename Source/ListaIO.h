@@ -11,6 +11,6 @@ typedef struct _ListaElemento {
 typedef struct _Lista {
     int size;
     ListaElemento *prim;
-} Lista;
+} ListaIO;
 
 // IMPLEMENTAR OPERACOES DE LISTA ENCADEADA
