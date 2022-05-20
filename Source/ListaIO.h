@@ -1,5 +1,5 @@
 #include "Util.h"
-#include "Process.h"
+#include "Processo.h"
 
 typedef struct _ListaElemento {
     int tempo_entrada, tempo_saida;

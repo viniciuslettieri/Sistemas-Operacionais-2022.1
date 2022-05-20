@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Process.h"
+#include "Processo.h"
  
 typedef struct _ElementoFila {
     Processo* processo;
@@ -13,10 +13,10 @@ typedef struct _Fila {
 } Fila;
  
 // Cria um novo elemento da Fila
-ElementoFila* novoElemento(Processo* val) {
+ElementoFila* novoElemento(Processo* processo) {
     ElementoFila* elem = (ElementoFila*) malloc( sizeof(ElementoFila) );
     elem->prox = NULL;
-    elem->val = val;
+    elem->processo = processo;
     return elem;
 }
  
@@ -30,8 +30,8 @@ Fila* criaFila() {
 }
  
 // Adiciona um novo elemento no fim da Fila
-void insereVerso(Fila* fila, Processo* val) {
-    ElementoFila* elem = novoElemento(val);
+void insereVerso(Fila* fila, Processo* processo) {
+    ElementoFila* elem = novoElemento(processo);
  
     if (fila->verso == NULL) {
         fila->frente = elem;
@@ -48,7 +48,7 @@ Processo* removeFrente(Fila* fila) {
     if (fila->frente == NULL)
         return -1;
 
-    Processo* frente_val = fila->frente->val;
+    Processo* frente_processo = fila->frente->processo;
  
     ElementoFila* aux = fila->frente;
     fila->frente = fila->frente->prox;
@@ -57,7 +57,7 @@ Processo* removeFrente(Fila* fila) {
         fila->verso = NULL;
 
     fila->tam -= 1;
-    return frente_val;
+    return frente_processo;
 }
 
 // Obtem a quantidade de elementos na Fila
@@ -70,7 +70,7 @@ Processo* frente(Fila* fila) {
     if (tam(fila) == 0)
         return -1;
     else
-        return fila->frente->val;
+        return fila->frente->processo;
 }
  
 // Obtem valor do elemento no fim da Fila
@@ -78,5 +78,5 @@ Processo* verso(Fila* fila) {
     if (tam(fila) == 0) 
         return -1;
     else
-        return fila->verso->val;
+        return fila->verso->processo;
 }

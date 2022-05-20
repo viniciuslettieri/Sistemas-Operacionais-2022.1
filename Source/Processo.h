@@ -13,6 +13,7 @@ typedef struct _DefinicaoProcesso{
   int entradaImpressora[MAX_IO];
 } DefinicaoProcesso;
 
+
 DefinicaoProcesso* geraDefinicaoProcesso(int maximoChegada, int maximoServico) {
   DefinicaoProcesso* processo = (DefinicaoProcesso*) malloc( sizeof(DefinicaoProcesso) );
 
@@ -36,6 +37,7 @@ DefinicaoProcesso* geraDefinicaoProcesso(int maximoChegada, int maximoServico) {
 
   return processo;
 }
+
 
 typedef struct _Processo{
   int PID;

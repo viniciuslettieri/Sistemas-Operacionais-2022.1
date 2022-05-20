@@ -1,4 +1,4 @@
-#include "Process.h"
+#include "Processo.h"
 #include "Queue.h"
 #include "ListaIO.h"
 #include "Util.h"
@@ -27,11 +27,11 @@ A cada unidade de tempo precisamos verificar se um processo finalizou seu IO, e 
 DefinicaoProcesso* tabelaProcessos[QUANT_PROCESSOS];
 
 // Declaração das Filas de Prioridade
-Queue* fila_alta;
-Queue* fila_baixa;
-Queue* fila_disco;
-Queue* fila_fita;
-Queue* fila_impressora;
+Fila* fila_alta;
+Fila* fila_baixa;
+Fila* fila_disco;
+Fila* fila_fita;
+Fila* fila_impressora;
 
 // Declaração da Lista de IO
 ListaIO* lista_io;
@@ -50,14 +50,14 @@ void inicializaEstruturas(){
     }
 
     // Inicialização das Filas de Prioridade
-    fila_alta = createQueue();
-    fila_baixa = createQueue();
-    fila_disco = createQueue();
-    fila_fita = createQueue();
-    fila_impressora = createQueue();
+    fila_alta = criaFila();
+    fila_baixa = criaFila();
+    fila_disco = criaFila();
+    fila_fita = criaFila();
+    fila_impressora = criaFila();
 
     // Inicialização da Lista de IO
-    lista_io = createList();
+    lista_io = criaLista();
 }
 
 void trataNovosProcessos(){
