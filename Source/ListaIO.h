@@ -47,18 +47,38 @@ void insere(Lista* lista, ListaElemento* elemento){
     lista->size++;
 }
 
-void removeElemento(Lista* lista){
-    if (lista->primeiro == NULL) return;
+ListaElemento* removeElemento(Lista* lista, ListaElemento* elemento){
+    if (lista->primeiro == NULL) return NULL;
 
-    ListaElemento* primeiroDaLista = lista->primeiro;
-    if (primeiroDaLista->proximo == NULL){
-        lista->primeiro = NULL;
-    } else {
-        lista->primeiro = primeiroDaLista->proximo;
+    if (lista->primeiro->proximo == NULL){
+        if (lista->primeiro == elemento){
+            lista->primeiro = NULL;
+            lista->size--;
+            return elemento;
+        } else
+            return NULL;
+    }
+    
+    ListaElemento* anterior = lista->primeiro;
+    ListaElemento* atual = lista->primeiro->proximo;
+
+    while(atual != elemento && atual->proximo != NULL){
+        anterior = atual;
+        atual = atual->proximo;    
     }
 
-    lista->size--;
-    free(primeiroDaLista);
+    if (atual == elemento){
+        if (atual->proximo == NULL){
+            anterior->proximo = NULL;
+        } else {
+            anterior->proximo = atual->proximo;
+        }
+        lista->size--;
+        return elemento;
+    } 
+    else
+        return NULL;
+    
 }
 
 void imprimeLista(Lista* lista){

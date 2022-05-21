@@ -1,5 +1,4 @@
 #include "ListaIO.h"
-#include "Processo.h"
 
 /* 
 -----------------------------
@@ -43,7 +42,8 @@ int tempo_processamento_atual = 0;      // tempo desde o inicio do quantum atual
 // ================= FUNCOES ================= //
 
 void inicializaEstruturas(){
-    // seta seed aleatoria
+    
+    // seta seed para gerar valores aleatorios
     setaAleatorio();
 
     // Inicialização da Tabela de Processos
@@ -70,20 +70,47 @@ void trataNovosProcessos(){
 void entraProximoProcesso(){
     // checa nas filas qual proximo processo vai entrar 
     // e esse processo que entrou já toma 1 instante de execucao corrente
+    if (fila_alta->tam > 0){
+        processoAtivo = removeFrente(fila_alta);
+        processoAtivo->tempoCorrente++;
+    } else if (fila_baixa->tam > 0) {
+        processoAtivo = removeFrente(fila_baixa);
+        processoAtivo->tempoCorrente++;
+    } else {
+        printf("\nSem processos prontos!\n");
+    }
 }
 
 void trataSaidasIO(){
     // Checar se existe algum processo saindo de IO
     // ... precisa da ListaIO
+    ListaElemento* atual = lista_io->primeiro;
+    while(atual != NULL){
+        if (atual->tempo_saida == tempo_atual){
+            ListaElemento* proximo = atual->proximo;
+            ListaElemento* elemento = removeElemento(lista_io, atual);
+
+            if (elemento->tipo_io == "DISCO") insereVerso(fila_baixa, elemento->processo);
+            else insereVerso(fila_alta, elemento->processo);
+            
+            atual = proximo;
+            free(elemento);
+        } else {
+            atual = atual->proximo;
+        }       
+    }
 }
 
 void trataEntradaIO(enum tipo_io tipo){
     if(tipo == IO_DISCO){
         insereVerso(fila_disco, processoAtivo);
+        insere(lista_io, criaElemento(tempo_processamento_atual, tempo_processamento_atual + TEMPO_DISCO, DISCO, processoAtivo));
     }else if(tipo == IO_FITA){
         insereVerso(fila_fita, processoAtivo);
+        insere(lista_io, criaElemento(tempo_processamento_atual, tempo_processamento_atual + TEMPO_FITA, FITA, processoAtivo));
     }else if(tipo == IO_IMPRESSORA){
         insereVerso(fila_impressora, processoAtivo);
+        insere(lista_io, criaElemento(tempo_processamento_atual, tempo_processamento_atual + TEMPO_IMPRESSORA, IMPRESSORA, processoAtivo));
     }
     processoAtivo = (Processo*) NULL;
 }
@@ -91,6 +118,7 @@ void trataEntradaIO(enum tipo_io tipo){
 void trataEntradaPreempcao(){
     // nao finalizado
     tempo_processamento_atual = 0;
+    insereVerso(fila_baixa, processoAtivo);
     processoAtivo = (Processo*) NULL;
 }
 
@@ -98,7 +126,6 @@ void trataProcessoAtual(){
     // Sem processos ativos
     if(processoAtivo == (Processo*) NULL){
         entraProximoProcesso();
-        processoAtivo->tempoCorrente++;
         tempo_processamento_atual++;
         return;
     }
@@ -120,7 +147,7 @@ void trataProcessoAtual(){
     if(tempo_processamento_atual == TAM_QUANTUM - 1){ 
         trataEntradaPreempcao();
     }else if(processoAtivo->tempoCorrente == definicaoProcessoAtivo->tempoDeServico - 1){ 
-        trataFimProcesso();
+        //trataFimProcesso();
     }else{
         processoAtivo->tempoCorrente++;
         tempo_processamento_atual++;
@@ -144,15 +171,15 @@ int main(){
 
     // printa tabela de processos
     printTabelaProcessos();
-    /*
+    
     // Tratamento por Unidade de Tempo    
-    while( emExecucao != (Processo*) NULL ){
+    /* while( emExecucao != (Processo*) NULL ){
         trataNovosProcessos();
         trataSaidasIO();
         trataProcessoAtual();
         tempo_atual++;
-    }
-    */
+    } */
+    
     // FREE DA TABELA DE DEFINICAO DE PROCESSOS
     // FREE DAS FILAS
     // FREE DOS PROCESSOS
