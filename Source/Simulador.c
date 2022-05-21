@@ -90,9 +90,9 @@ void trataSaidasIO(){
             ListaElemento* proximo = atual->proximo;
             ListaElemento* elemento = removeElemento(lista_io, atual);
 
-            if (elemento->tipo_io == "DISCO") insereVerso(fila_baixa, elemento->processo);
+            if (elemento->tipo_io == DISCO) insereVerso(fila_baixa, elemento->processo);
             else insereVerso(fila_alta, elemento->processo);
-            
+
             atual = proximo;
             free(elemento);
         } else {
