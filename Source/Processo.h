@@ -54,6 +54,7 @@ typedef struct _Processo{
   int PID;
   int PPID;
   int status;
+  int tempoCorrente;
 } Processo;
 
 void printDefinicaoProcesso(DefinicaoProcesso* dp){
