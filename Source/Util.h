@@ -9,6 +9,7 @@
 #define TAM_QUANTUM 4
 
 enum estados {NOVO, PRONTO, EXECUCAO, SAIDA, BLOQUEADO};
+enum tipo_io {IO_DISCO, IO_FITA, IO_IMPRESSORA};
 
 int geraNumero(int minimo, int maximo) {
   srand(time(0));
