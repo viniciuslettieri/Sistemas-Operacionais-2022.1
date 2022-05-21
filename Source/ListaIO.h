@@ -1,4 +1,4 @@
-#include "Processo.h"
+#include "Queue.h"
 
 typedef struct _ListaElemento {
     int tempo_entrada, tempo_saida;
@@ -14,7 +14,7 @@ typedef struct _Lista {
 
 // IMPLEMENTAR OPERACOES DE LISTA ENCADEADA
 
-Lista* criaListaIO(){
+Lista* criaLista(){
     Lista* lista = (Lista*)malloc(sizeof(Lista));
     lista->primeiro = NULL;
     lista->size = 0;

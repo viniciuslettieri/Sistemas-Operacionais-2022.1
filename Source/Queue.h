@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Processo.h"
- 
+
 typedef struct _ElementoFila {
     Processo* processo;
     struct _ElementoFila* prox;
@@ -46,7 +46,7 @@ void insereVerso(Fila* fila, Processo* processo) {
 // Remove um elemento do inicio da Fila
 Processo* removeFrente(Fila* fila) {
     if (fila->frente == NULL)
-        return -1;
+        return NULL;
 
     Processo* frente_processo = fila->frente->processo;
  
@@ -68,7 +68,7 @@ int tam(Fila* fila) {
 // Obtem valor do elemento na frente da Fila
 Processo* frente(Fila* fila) {
     if (tam(fila) == 0)
-        return -1;
+        return NULL;
     else
         return fila->frente->processo;
 }
@@ -76,7 +76,7 @@ Processo* frente(Fila* fila) {
 // Obtem valor do elemento no fim da Fila
 Processo* verso(Fila* fila) {
     if (tam(fila) == 0) 
-        return -1;
+        return NULL;
     else
         return fila->verso->processo;
 }
