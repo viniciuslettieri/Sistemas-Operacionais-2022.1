@@ -12,7 +12,6 @@ typedef struct _Lista {
     ListaElemento *primeiro;
 } Lista;
 
-// IMPLEMENTAR OPERACOES DE LISTA ENCADEADA
 
 Lista* criaLista(){
     Lista* lista = (Lista*)malloc(sizeof(Lista));

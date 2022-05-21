@@ -1,4 +1,5 @@
 #include "ListaIO.h"
+#include "Processo.h"
 
 /* 
 -----------------------------
@@ -33,14 +34,15 @@ Fila* fila_impressora;
 Lista* lista_io;
 
 // Processo em Execução Corrente
-Processo* emExecucao = (Processo*) NULL;
-int tempo_atual = 0;
+Processo* processoAtivo = (Processo*) NULL;
+DefinicaoProcesso* definicaoProcessoAtivo = (DefinicaoProcesso*) NULL;
 
+int tempo_atual = 0;                    // tempo desde o inicio do escalonador
+int tempo_processamento_atual = 0;      // tempo desde o inicio do quantum atual
 
 // ================= FUNCOES ================= //
 
 void inicializaEstruturas(){
-
     // seta seed aleatoria
     setaAleatorio();
 
@@ -65,24 +67,64 @@ void trataNovosProcessos(){
     // ...
 }
 
+void entraProximoProcesso(){
+    // checa nas filas qual proximo processo vai entrar 
+    // e esse processo que entrou já toma 1 instante de execucao corrente
+}
+
 void trataSaidasIO(){
     // Checar se existe algum processo saindo de IO
     // ... precisa da ListaIO
 }
 
-void entraIO(){
-
+void trataEntradaIO(enum tipo_io tipo){
+    if(tipo == IO_DISCO){
+        insereVerso(fila_disco, processoAtivo);
+    }else if(tipo == IO_FITA){
+        insereVerso(fila_fita, processoAtivo);
+    }else if(tipo == IO_IMPRESSORA){
+        insereVerso(fila_impressora, processoAtivo);
+    }
+    processoAtivo = (Processo*) NULL;
 }
 
-void entraPreempcao(){
-
+void trataEntradaPreempcao(){
+    // nao finalizado
+    tempo_processamento_atual = 0;
+    processoAtivo = (Processo*) NULL;
 }
 
 void trataProcessoAtual(){
-    // verifica se entraIO();
-    // ou verifica se entraPreempcao();
-    // ou verifica se terminou (precisa dar free)
-    // ou entao nada
+    // Sem processos ativos
+    if(processoAtivo == (Processo*) NULL){
+        entraProximoProcesso();
+        processoAtivo->tempoCorrente++;
+        tempo_processamento_atual++;
+        return;
+    }
+
+    // Trata Entrada em IO
+    for(int i=0; i<MAX_IO; i++){
+        if(definicaoProcessoAtivo->entradaDisco[i] == processoAtivo->tempoCorrente){
+            trataEntradaIO(IO_DISCO);
+            return;
+        }else if(definicaoProcessoAtivo->entradaFita[i] == processoAtivo->tempoCorrente){
+            trataEntradaIO(IO_FITA);
+            return;
+        }else if(definicaoProcessoAtivo->entradaImpressora[i] == processoAtivo->tempoCorrente){
+            trataEntradaIO(IO_IMPRESSORA);
+            return;
+        }
+    }
+
+    if(tempo_processamento_atual == TAM_QUANTUM - 1){ 
+        trataEntradaPreempcao();
+    }else if(processoAtivo->tempoCorrente == definicaoProcessoAtivo->tempoDeServico - 1){ 
+        trataFimProcesso();
+    }else{
+        processoAtivo->tempoCorrente++;
+        tempo_processamento_atual++;
+    }
 }
 
 void printTabelaProcessos(){
