@@ -13,6 +13,8 @@ typedef struct _DefinicaoProcesso{
   int entradaImpressora[MAX_IO];
 } DefinicaoProcesso;
 
+void printDefinicaoProcesso(DefinicaoProcesso* dp);
+int contemValorEntradas(int valor, DefinicaoProcesso* processo);
 
 DefinicaoProcesso* geraDefinicaoProcesso(int maximoChegada, int maximoServico) {
   DefinicaoProcesso* processo = (DefinicaoProcesso*) malloc( sizeof(DefinicaoProcesso) );
@@ -28,12 +30,21 @@ DefinicaoProcesso* geraDefinicaoProcesso(int maximoChegada, int maximoServico) {
   }
 
   // Obtem as entradas em IO
-  for(int i=0; i<geraNumero(0, MAX_IO); i++)
-    processo->entradaDisco[i] = geraNumero(1, processo->tempoDeServico-1);
-  for(int i=0; i<geraNumero(0, MAX_IO); i++)
-    processo->entradaFita[i] = geraNumero(1, processo->tempoDeServico-1);
-  for(int i=0; i<geraNumero(0, MAX_IO); i++)
-    processo->entradaImpressora[i] = geraNumero(1, processo->tempoDeServico-1);
+  for(int i=0; i<geraNumero(0, MAX_IO); i++) {
+    int valor = geraNumero(1, processo->tempoDeServico-1);
+    if (!contemValorEntradas(valor, processo))
+      processo->entradaDisco[i] = valor;
+  } 
+  for(int i=0; i<geraNumero(0, MAX_IO); i++){
+    int valor = geraNumero(1, processo->tempoDeServico-1);
+    if (!contemValorEntradas(valor, processo))
+      processo->entradaFita[i] = valor;
+  }
+  for(int i=0; i<geraNumero(0, MAX_IO); i++) {
+    int valor = geraNumero(1, processo->tempoDeServico-1);
+    if (!contemValorEntradas(valor, processo))
+      processo->entradaImpressora[i] = valor;
+  }
 
   return processo;
 }
@@ -44,3 +55,35 @@ typedef struct _Processo{
   int PPID;
   int status;
 } Processo;
+
+void printDefinicaoProcesso(DefinicaoProcesso* dp){
+  printf("Tempo de Chegada: %d\n", dp->tempoDeChegada);
+  printf("Tempo de Servico: %d\n\n", dp->tempoDeServico);
+  printf("-- Entradas de Disco -- \n");
+  for (int i = 0; i < MAX_IO; i++){
+    if (dp->entradaDisco[i] != -1)
+      printf("Entrada de Disco: %d\n", dp->entradaDisco[i]);
+  }
+  printf("-- Entradas de Fita -- \n");
+  for (int i = 0; i < MAX_IO; i++){
+    if (dp->entradaFita[i] != -1)
+      printf("Entrada de Fita: %d\n", dp->entradaFita[i]);
+  }
+  printf("-- Entradas de Impressora -- \n");
+  for (int i = 0; i < MAX_IO; i++){
+    if (dp->entradaImpressora[i] != -1)
+      printf("Entrada de Impressora: %d\n", dp->entradaImpressora[i]);
+  }
+}
+
+int contemValorEntradas(int valor, DefinicaoProcesso* processo){
+  for (int i = 0; i < MAX_IO; i++){
+    if (
+      processo->entradaDisco[i] == valor || 
+      processo->entradaFita[i] == valor || 
+      processo->entradaImpressora[i] == valor
+      ) 
+      return 1;
+  }
+  return 0;
+}

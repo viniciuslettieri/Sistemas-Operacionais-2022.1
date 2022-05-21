@@ -1,8 +1,4 @@
-#include "Processo.h"
-#include "Queue.h"
 #include "ListaIO.h"
-#include "Util.h"
-
 
 /* 
 -----------------------------
@@ -34,7 +30,7 @@ Fila* fila_fita;
 Fila* fila_impressora;
 
 // Declaração da Lista de IO
-ListaIO* lista_io;
+Lista* lista_io;
 
 // Processo em Execução Corrente
 Processo* emExecucao = (Processo*) NULL;
@@ -44,6 +40,10 @@ int tempo_atual = 0;
 // ================= FUNCOES ================= //
 
 void inicializaEstruturas(){
+
+    // seta seed aleatoria
+    setaAleatorio();
+
     // Inicialização da Tabela de Processos
     for(int i=0; i<QUANT_PROCESSOS; i++){
         tabelaProcessos[i] = geraDefinicaoProcesso(MAX_CHEGADA, MAX_TEMPO_SERVICO);
@@ -85,6 +85,14 @@ void trataProcessoAtual(){
     // ou entao nada
 }
 
+void printTabelaProcessos(){
+    for (int i = 0; i < QUANT_PROCESSOS; i++){
+        printf("\nProcesso %d\n", i+1);
+        printDefinicaoProcesso(tabelaProcessos[i]);
+    }
+    puts("");
+}
+
 
 // ================ MAIN ================ //
 
@@ -92,6 +100,9 @@ int main(){
 
     inicializaEstruturas();
 
+    // printa tabela de processos
+    printTabelaProcessos();
+    /*
     // Tratamento por Unidade de Tempo    
     while( emExecucao != (Processo*) NULL ){
         trataNovosProcessos();
@@ -99,7 +110,7 @@ int main(){
         trataProcessoAtual();
         tempo_atual++;
     }
-
+    */
     // FREE DA TABELA DE DEFINICAO DE PROCESSOS
     // FREE DAS FILAS
     // FREE DOS PROCESSOS

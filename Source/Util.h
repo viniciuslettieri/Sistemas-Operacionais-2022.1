@@ -3,7 +3,7 @@
 #define TEMPO_FITA 5
 #define TEMPO_IMPRESSORA 10
 
-#define QUANT_PROCESSOS 5
+#define QUANT_PROCESSOS 3
 #define MAX_CHEGADA 30
 #define MAX_TEMPO_SERVICO 15 
 #define TAM_QUANTUM 4
@@ -11,6 +11,9 @@
 enum estados {NOVO, PRONTO, EXECUCAO, SAIDA, BLOQUEADO};
 
 int geraNumero(int minimo, int maximo) {
-  srand(time(0));
   return rand() % maximo + minimo;
+}
+
+void setaAleatorio(){
+  srand(time(0));
 }

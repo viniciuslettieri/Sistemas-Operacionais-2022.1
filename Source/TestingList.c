@@ -1,7 +1,7 @@
 #include "ListaIO.h"
 
 int main(void){
-    Lista* listaIO = criaListaIO();
+    Lista* listaIO = criaLista();
     Processo* p1 = (Processo*)malloc(sizeof(Processo*));
     Processo* p2 = (Processo*)malloc(sizeof(Processo*));
     Processo* p3 = (Processo*)malloc(sizeof(Processo*));
