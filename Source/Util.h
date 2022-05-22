@@ -16,9 +16,12 @@ enum estados {NOVO, PRONTO, EXECUCAO, SAIDA, BLOQUEADO};
 enum tipo_io {IO_DISCO, IO_FITA, IO_IMPRESSORA};
 
 int geraNumero(int minimo, int maximo) {
-  return rand() % maximo + minimo;
+    if(minimo > maximo) 
+        return -1;
+    else 
+        return rand() % maximo + minimo;
 }
 
 void setaAleatorio(){
-  srand(time(0));
+    srand(time(0));
 }

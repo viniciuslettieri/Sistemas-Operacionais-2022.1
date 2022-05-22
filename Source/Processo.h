@@ -20,7 +20,7 @@ DefinicaoProcesso* geraDefinicaoProcesso(int maximoChegada, int maximoServico) {
   DefinicaoProcesso* processo = (DefinicaoProcesso*) malloc( sizeof(DefinicaoProcesso) );
 
   processo->tempoDeChegada = geraNumero(0, maximoChegada);
-  processo->tempoDeServico = geraNumero(2, maximoServico);
+  processo->tempoDeServico = geraNumero(1, maximoServico);
   processo->PID_relacionado = -1;
 
   // Inicializa as entradas com -1
@@ -59,22 +59,28 @@ typedef struct _Processo{
 } Processo;
 
 void printDefinicaoProcesso(DefinicaoProcesso* dp){
-  printf("\nTempo de Chegada: %d\n", dp->tempoDeChegada);
-  printf("Tempo de Servico: %d\n", dp->tempoDeServico);
-  printf("Entradas de Disco: ");
+  printf("\nTempo de Chegada: \t%d\n", dp->tempoDeChegada);
+  printf("Tempo de Servico: \t%d\n", dp->tempoDeServico);
+  printf("Entradas de Disco: \t");
   for (int i = 0; i < MAX_IO; i++){
     if (dp->entradaDisco[i] != -1)
-      printf("%d ", dp->entradaDisco[i]);
+      printf("%-2d ", dp->entradaDisco[i]);
+    else
+      printf("*  ");
   }
-  printf("\nEntradas de Fita: ");
+  printf("\nEntradas de Fita: \t");
   for (int i = 0; i < MAX_IO; i++){
     if (dp->entradaFita[i] != -1)
-      printf("%d ", dp->entradaFita[i]);
+      printf("%-2d ", dp->entradaFita[i]);
+    else
+      printf("*  ");
   }
   printf("\nEntradas de Impressora: ");
   for (int i = 0; i < MAX_IO; i++){
     if (dp->entradaImpressora[i] != -1)
-      printf("%d ", dp->entradaImpressora[i]);
+      printf("%-2d ", dp->entradaImpressora[i]);
+    else
+      printf("*  ");
   }
 
   printf("\n");
