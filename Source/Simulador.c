@@ -190,23 +190,26 @@ void trataProcessoAtual(){
 }
 
 void printTabelaProcessos(){
+    printf("\n== Tabela de Definicoes dos Processos ==\n");
+
+    printf("\n- - - - - - - - - - - - - - - - -");
     for (int i = 0; i < QUANT_PROCESSOS; i++){
-        printf("\n== Processo %d ==\n", i+1);
         printDefinicaoProcesso(tabelaProcessos[i]);
+        printf("- - - - - - - - - - - - - - - - -");
     }
-    puts("");
+    printf("\n");
 }
 
 void printEstadoAtual(){
-    printf("\n-- Estado no Instante %d --\n\n", tempo_atual);
+    printf("\n-- Estado ao Fim do Instante %d --\n\n", tempo_atual);
 
     if(processoAtivo != (Processo*) NULL)
-        printf("Processo %d Ativo: [Tempo de Servico %d] [Tempo no Quantum %d]\n", processoAtivo->PID, processoAtivo->tempoCorrente, tempo_processamento_atual);
+        printf("Processo %d Ativo: [Tempo de Servico: %d] [Tempo no Quantum: %d]\n", processoAtivo->PID, processoAtivo->tempoCorrente, tempo_processamento_atual);
     else
         printf("Nenhum Processo Ativo! \n");
 
     if(definicaoProcessoAtivo != (DefinicaoProcesso*) NULL)
-        printf("Definicao de Processo %d Ativo: [Tempo Total de Servico %d]\n", definicaoProcessoAtivo->PID_relacionado, definicaoProcessoAtivo->tempoDeServico);
+        printf("Definicao de Processo %d Ativo: [Tempo Total de Servico: %d]\n", definicaoProcessoAtivo->PID_relacionado, definicaoProcessoAtivo->tempoDeServico);
     else
         printf("Nenhuma Definicao de Processo Ativa!\n");
 
@@ -245,7 +248,7 @@ void printEstadoAtual(){
 
 int main(){
 
-    printf("- Iniciando o Escalonador -\n");
+    printf("== Iniciando o Escalonador ==\n");
 
     inicializaEstruturas();
 
