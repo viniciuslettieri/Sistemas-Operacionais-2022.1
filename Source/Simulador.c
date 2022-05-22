@@ -3,21 +3,6 @@
 
 #include "ListaIO.h"
 
-/* 
------------------------------
-Listagem de Pensamento::
-
-Inicio -> Filas Vazias -> Lista de IO Vazia
-
-A cada unidade de tempo verificamos se existe um novo processo sendo criado.
-Se sim, precisa entrar na fila de alta prioridade.
-
-Quando um processo inicia o IO, ele é removido de sua fila e adicionado na Lista de IO, com seu tempo de finalização
-
-A cada unidade de tempo precisamos verificar se um processo finalizou seu IO, e caso positivo, será adicionado na sua respectiva fila.
-
------------------------------
-*/
 
 
 // =============== DECLARACOES =============== //
@@ -39,10 +24,14 @@ Lista* lista_io;
 Processo* processoAtivo = (Processo*) NULL;
 DefinicaoProcesso* definicaoProcessoAtivo = (DefinicaoProcesso*) NULL;
 
+
+// Informacoes Globais
 int tempo_atual = 0;                    // tempo desde o inicio do escalonador
 int tempo_processamento_atual = 0;      // tempo desde o inicio do quantum atual
 int processos_criados = 0;              // quantidade de processos criados ate o momento
 int processos_finalizados = 0;          // quantidade de processos finalizados ate o momento
+
+
 
 // ================= FUNCOES ================= //
 
@@ -86,8 +75,7 @@ void trataNovosProcessos(){
 }
 
 void entraProximoProcesso(){
-    // checa nas filas qual proximo processo vai entrar 
-    // e esse processo que entrou já toma 1 instante de execucao corrente
+    // Encontra o Proximo Processo Pronto para Execucao
     if (fila_alta->tam > 0) {
         processoAtivo = removeFrente(fila_alta);
         processoAtivo->tempoCorrente++;
@@ -112,9 +100,6 @@ void entraProximoProcesso(){
 }
 
 void trataSaidasIO(){
-    printf("\n[-] Processo %d Saiu de IO!\n", processoAtivo->PID);
-    // Checar se existe algum processo saindo de IO
-    // ... precisa da ListaIO
     ListaElemento* atual = lista_io->primeiro;
     while(atual != NULL){
         if (atual->tempo_saida == tempo_atual){
@@ -126,6 +111,8 @@ void trataSaidasIO(){
 
             atual = proximo;
             free(elemento);
+
+            printf("\n[-] Processo %d Saiu de IO!\n", processoAtivo->PID);
         } else {
             atual = atual->proximo;
         }       
@@ -250,6 +237,8 @@ void printEstadoAtual(){
 
     printf("\n");
 }
+
+
 
 
 // ================ MAIN ================ //
