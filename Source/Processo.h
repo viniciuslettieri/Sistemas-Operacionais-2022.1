@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
+
 #include "Util.h"
 
 typedef struct _DefinicaoProcesso{
+  int PID_relacionado;
   int tempoDeChegada;
   int tempoDeServico;
 
@@ -21,6 +21,7 @@ DefinicaoProcesso* geraDefinicaoProcesso(int maximoChegada, int maximoServico) {
 
   processo->tempoDeChegada = geraNumero(0, maximoChegada);
   processo->tempoDeServico = geraNumero(1, maximoServico);
+  processo->PID_relacionado = -1;
 
   // Inicializa as entradas com -1
   for(int i=0; i<MAX_IO; i++){
@@ -44,7 +45,7 @@ DefinicaoProcesso* geraDefinicaoProcesso(int maximoChegada, int maximoServico) {
     int valor = geraNumero(1, processo->tempoDeServico-1);
     if (!contemValorEntradas(valor, processo))
       processo->entradaImpressora[i] = valor;
-  }
+  } 
 
   return processo;
 }
@@ -58,25 +59,28 @@ typedef struct _Processo{
 } Processo;
 
 void printDefinicaoProcesso(DefinicaoProcesso* dp){
-  printf("Tempo de Chegada: %d\n", dp->tempoDeChegada);
-  printf("Tempo de Servico: %d\n\n", dp->tempoDeServico);
-  printf("-- Entradas de Disco -- \n");
+  printf("\nTempo de Chegada: %d\n", dp->tempoDeChegada);
+  printf("Tempo de Servico: %d\n", dp->tempoDeServico);
+  printf("Entradas de Disco: ");
   for (int i = 0; i < MAX_IO; i++){
     if (dp->entradaDisco[i] != -1)
-      printf("Entrada de Disco: %d\n", dp->entradaDisco[i]);
+      printf("%d ", dp->entradaDisco[i]);
   }
-  printf("-- Entradas de Fita -- \n");
+  printf("\nEntradas de Fita: ");
   for (int i = 0; i < MAX_IO; i++){
     if (dp->entradaFita[i] != -1)
-      printf("Entrada de Fita: %d\n", dp->entradaFita[i]);
+      printf("%d ", dp->entradaFita[i]);
   }
-  printf("-- Entradas de Impressora -- \n");
+  printf("\nEntradas de Impressora: ");
   for (int i = 0; i < MAX_IO; i++){
     if (dp->entradaImpressora[i] != -1)
-      printf("Entrada de Impressora: %d\n", dp->entradaImpressora[i]);
+      printf("%d ", dp->entradaImpressora[i]);
   }
+
+  printf("\n");
 }
 
+// Verifica se o tempo de entrada em IO já existe para o processo
 int contemValorEntradas(int valor, DefinicaoProcesso* processo){
   for (int i = 0; i < MAX_IO; i++){
     if (
