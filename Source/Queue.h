@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "Processo.h"
 
 typedef struct _ElementoFila {
@@ -57,6 +58,7 @@ Processo* removeFrente(Fila* fila) {
         fila->verso = NULL;
 
     fila->tam -= 1;
+    free(aux);
     return frente_processo;
 }
 
