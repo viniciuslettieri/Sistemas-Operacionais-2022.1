@@ -224,27 +224,27 @@ void printEstadoAtual(){
         printf("Nenhuma Definicao de Processo Ativa!\n");
 
     if(fila_alta->tam > 0)
-        printf("Fila de Alta Prioridade: %d Processos com %d no Topo\n", fila_alta->tam, fila_alta->frente->processo->PID);
+        printf("Fila de Alta Prioridade: %d Processos com %d na Frente\n", fila_alta->tam, fila_alta->frente->processo->PID);
     else
         printf("Fila de Alta Prioridade: %d Processos\n", fila_alta->tam);
 
     if(fila_baixa->tam > 0)
-        printf("Fila de Baixa Prioridade: %d Processos com %d no Topo\n", fila_baixa->tam, fila_baixa->frente->processo->PID);
+        printf("Fila de Baixa Prioridade: %d Processos com %d na Frente\n", fila_baixa->tam, fila_baixa->frente->processo->PID);
     else
         printf("Fila de Baixa Prioridade: %d Processos\n", fila_baixa->tam);
 
     if(fila_disco->tam > 0)
-        printf("Fila de IO Disco: %d Processos com %d no Topo\n", fila_disco->tam, fila_disco->frente->processo->PID);
+        printf("Fila de IO Disco: %d Processos com %d na Frente\n", fila_disco->tam, fila_disco->frente->processo->PID);
     else
         printf("Fila de IO Disco: %d Processos\n", fila_disco->tam);
 
     if(fila_fita->tam > 0)
-        printf("Fila de IO Fita: %d Processos com %d no Topo\n", fila_fita->tam, fila_fita->frente->processo->PID);
+        printf("Fila de IO Fita: %d Processos com %d na Frente\n", fila_fita->tam, fila_fita->frente->processo->PID);
     else
         printf("Fila de IO Fita: %d Processos\n", fila_fita->tam);
 
     if(fila_impressora->tam > 0)
-        printf("Fila de IO Impressora: %d Processos com %d no Topo\n", fila_impressora->tam, fila_impressora->frente->processo->PID);
+        printf("Fila de IO Impressora: %d Processos com %d na Frente\n", fila_impressora->tam, fila_impressora->frente->processo->PID);
     else
         printf("Fila de IO Impressora: %d Processos\n", fila_impressora->tam);
 
