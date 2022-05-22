@@ -171,10 +171,10 @@ void trataProcessoAtual(){
     // }
     
     if(processoAtivo != (Processo*) NULL){
-        if(tempo_processamento_atual == TAM_QUANTUM){ 
-            trataEntradaPreempcao();
-        }else if(processoAtivo->tempoCorrente == definicaoProcessoAtivo->tempoDeServico){ 
+        if(processoAtivo->tempoCorrente == definicaoProcessoAtivo->tempoDeServico){ 
             trataFimProcesso();
+        }else if(tempo_processamento_atual == TAM_QUANTUM){ 
+            trataEntradaPreempcao();
         }else{
             processoAtivo->tempoCorrente++;
             tempo_processamento_atual++;
@@ -253,7 +253,7 @@ int main(){
     printTabelaProcessos();
     
     // Tratamento por Unidade de Tempo    
-    while( processos_finalizados < QUANT_PROCESSOS ){
+    while( processos_finalizados < QUANT_PROCESSOS && tempo_atual < 100 ){
         printf("\n== Inicio do Instante %d ==\n", tempo_atual);
 
         trataNovosProcessos();

@@ -20,7 +20,7 @@ DefinicaoProcesso* geraDefinicaoProcesso(int maximoChegada, int maximoServico) {
   DefinicaoProcesso* processo = (DefinicaoProcesso*) malloc( sizeof(DefinicaoProcesso) );
 
   processo->tempoDeChegada = geraNumero(0, maximoChegada);
-  processo->tempoDeServico = geraNumero(1, maximoServico);
+  processo->tempoDeServico = geraNumero(2, maximoServico);
   processo->PID_relacionado = -1;
 
   // Inicializa as entradas com -1
