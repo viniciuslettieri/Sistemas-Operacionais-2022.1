@@ -9,8 +9,8 @@
 #define TAM_QUANTUM 4
 
 #define DISCO 1
-#define FITA 1
-#define IMPRESSORA 1
+#define FITA 2
+#define IMPRESSORA 3
 
 enum estados {NOVO, PRONTO, EXECUCAO, SAIDA, BLOQUEADO};
 enum tipo_io {IO_DISCO, IO_FITA, IO_IMPRESSORA};
