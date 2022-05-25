@@ -61,12 +61,12 @@ void inicializaEstruturas(){
 
 void trataNovosProcessos(){
     // Novos Processos no Instante Atual sao Inseridos na Fila de Alta Prioridade
-    printf("[Remover depois] Tempos de chegada: ");
+    // printf("[Remover depois] Tempos de chegada: ");
     for (int i = 0; i < QUANT_PROCESSOS; i++){
         if(tabelaProcessos[i] == (DefinicaoProcesso*) NULL)
             continue;
 
-        printf("%d ", tabelaProcessos[i]->tempoDeChegada);
+        // printf("%d ", tabelaProcessos[i]->tempoDeChegada);
 
         if(tabelaProcessos[i]->tempoDeChegada == tempo_atual){
             Processo* aux = (Processo*) malloc(sizeof(Processo));
@@ -82,7 +82,7 @@ void trataNovosProcessos(){
             printf("\n[++] Novo Processo %d Criado!\n", processos_criados);
         }
     }
-    puts("\n");
+    // puts("\n");
 }
 
 void entraProximoProcesso(){
@@ -134,19 +134,16 @@ void trataSaidasIO(){
     }
 }
 
-void trataEntradaIO(enum tipo_io tipo){
-    // Verifica se o Processo Corrente Deve Entrar em IO
-    if(tipo == IO_DISCO && processos_em_disco == 0){
+void trataEntradaFilaIO(enum tipo_io tipo){
+    // Verifica se o Processo Corrente Deve Entrar na Fila para IO
+    if(tipo == IO_DISCO){
         insereVerso(fila_disco, processoAtivo);
-        processos_em_disco++;
         printf("\n[-] Processo %d Entrou na Fila de Disco!\n", processoAtivo->PID);
-    }else if(tipo == IO_FITA && processos_em_fita == 0){
+    }else if(tipo == IO_FITA){
         insereVerso(fila_fita, processoAtivo);
-        processos_em_fita++;
         printf("\n[-] Processo %d Entrou na Fila de Fita!\n", processoAtivo->PID);
-    }else if(tipo == IO_IMPRESSORA && processos_em_impressora == 0){
+    }else if(tipo == IO_IMPRESSORA){
         insereVerso(fila_impressora, processoAtivo);        
-        processos_em_impressora++;
         printf("\n[-] Processo %d Entrou na Fila de Impressora!\n", processoAtivo->PID);
     }
     
@@ -155,20 +152,23 @@ void trataEntradaIO(enum tipo_io tipo){
 }
 
 void entraProximoIO(){
-    // Encontra o Proximo Processo Pronto para IO
-    if (fila_disco->tam > 0) {
+    // Encontra o Proximo Processo Pronto para iniciar IO
+    if (fila_disco->tam > 0 && processos_em_disco == 0) {
         Processo* processoIO = removeFrente(fila_disco);
         insere(lista_io, criaElemento(tempo_atual, tempo_atual + TEMPO_DISCO, IO_DISCO, processoIO));
+        processos_em_disco++;
         printf("\n[*] Processo %d Iniciou Disco!\n", processoIO->PID);
     }
-    if (fila_fita->tam > 0) {
+    if (fila_fita->tam > 0 && processos_em_fita == 0) {
         Processo* processoIO = removeFrente(fila_fita);
         insere(lista_io, criaElemento(tempo_atual, tempo_atual + TEMPO_FITA, IO_FITA, processoIO));
+        processos_em_fita++;
         printf("\n[*] Processo %d Iniciou Fita!\n", processoIO->PID);
     }
-    if (fila_impressora->tam > 0) {
+    if (fila_impressora->tam > 0 && processos_em_impressora == 0) {
         Processo* processoIO = removeFrente(fila_impressora);
         insere(lista_io, criaElemento(tempo_atual, tempo_atual + TEMPO_IMPRESSORA, IO_IMPRESSORA, processoIO));
+        processos_em_impressora++;
         printf("\n[*] Processo %d Iniciou Impressora!\n", processoIO->PID);
     }
 }
@@ -209,11 +209,11 @@ void trataProcessoAtual(){
         if (processoAtivo == (Processo*) NULL) break;
 
         if(definicaoProcessoAtivo->entradaDisco[i] == processoAtivo->tempoCorrente){
-                trataEntradaIO(IO_DISCO);
+                trataEntradaFilaIO(IO_DISCO);
         }else if(definicaoProcessoAtivo->entradaFita[i] == processoAtivo->tempoCorrente){
-                trataEntradaIO(IO_FITA);
+                trataEntradaFilaIO(IO_FITA);
         }else if(definicaoProcessoAtivo->entradaImpressora[i] == processoAtivo->tempoCorrente){
-                trataEntradaIO(IO_IMPRESSORA);
+                trataEntradaFilaIO(IO_IMPRESSORA);
         }
     }
     
@@ -233,7 +233,6 @@ void trataProcessoAtual(){
     if(processoAtivo == (Processo*) NULL){
         entraProximoProcesso();
         tempo_processamento_atual++;
-        return;
     }
 }
 
@@ -250,7 +249,7 @@ void printTabelaProcessos(){
 
 void printTabelaIO(){
     ListaElemento* atual = lista_io->primeiro;
-    while(atual != NULL){
+    while(atual != (ListaElemento*) NULL){
         printf("[%d: ", atual->processo->PID);
 
         if(atual->tipo_io == IO_DISCO)
