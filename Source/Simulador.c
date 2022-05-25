@@ -204,17 +204,16 @@ void trataFimProcesso(){
 
 void trataProcessoAtual(){
     //Trata Entrada em IO
-    if (processoAtivo != NULL){
-        for(int i=0; i<MAX_IO; i++){
-            if (processoAtivo == NULL) break;
+    
+    for(int i=0; i<MAX_IO; i++){
+        if (processoAtivo == (Processo*) NULL) break;
 
-            if(definicaoProcessoAtivo->entradaDisco[i] == processoAtivo->tempoCorrente){
+        if(definicaoProcessoAtivo->entradaDisco[i] == processoAtivo->tempoCorrente){
                 trataEntradaIO(IO_DISCO);
-            }else if(definicaoProcessoAtivo->entradaFita[i] == processoAtivo->tempoCorrente){
+        }else if(definicaoProcessoAtivo->entradaFita[i] == processoAtivo->tempoCorrente){
                 trataEntradaIO(IO_FITA);
-            }else if(definicaoProcessoAtivo->entradaImpressora[i] == processoAtivo->tempoCorrente){
+        }else if(definicaoProcessoAtivo->entradaImpressora[i] == processoAtivo->tempoCorrente){
                 trataEntradaIO(IO_IMPRESSORA);
-            }
         }
     }
     

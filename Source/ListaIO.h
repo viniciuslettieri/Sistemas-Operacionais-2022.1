@@ -59,6 +59,13 @@ ListaElemento* removeElemento(Lista* lista, ListaElemento* elemento){
         } else
             return NULL;
     }
+
+    if (lista->primeiro == elemento && lista->primeiro->proximo != NULL) {
+        ListaElemento* prox = lista->primeiro->proximo;
+        free(lista->primeiro);
+        lista->primeiro = prox;
+        return prox;
+    }    
     
     ListaElemento* anterior = lista->primeiro;
     ListaElemento* atual = lista->primeiro->proximo;
