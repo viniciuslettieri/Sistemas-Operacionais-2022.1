@@ -31,6 +31,10 @@ int tempo_processamento_atual = 0;      // tempo desde o inicio do quantum atual
 int processos_criados = 0;              // quantidade de processos criados ate o momento
 int processos_finalizados = 0;          // quantidade de processos finalizados ate o momento
 
+int processos_em_disco = 0;             // quantidade de processos em estado de disco (limite de 1)
+int processos_em_fita = 0;              // quantidade de processos em estado de fita (limite de 1)
+int processos_em_impressora = 0;        // quantidade de processos em estado de impressora (limite de 1)
+
 
 
 // ================= FUNCOES ================= //
@@ -57,9 +61,10 @@ void inicializaEstruturas(){
 
 void trataNovosProcessos(){
     // Novos Processos no Instante Atual sao Inseridos na Fila de Alta Prioridade
-    printf("Tempos de chegada: ");
     for (int i = 0; i < QUANT_PROCESSOS; i++){
-        printf("%d ", tabelaProcessos[i]->tempoDeChegada);
+        if(tabelaProcessos[i] == (DefinicaoProcesso*) NULL)
+            continue;
+
         if(tabelaProcessos[i]->tempoDeChegada == tempo_atual){
             Processo* aux = (Processo*) malloc(sizeof(Processo));
             aux->PID = ++processos_criados;
@@ -71,10 +76,9 @@ void trataNovosProcessos(){
 
             insereVerso(fila_alta, aux);
 
-            printf("\n[++] Novo Processo %d Criado!\n", processos_criados);
+            printf("\n[++] Novo Processo %d Criado! [Relativo ao #%d da Tabela]\n", processos_criados, i+1);
         }
     }
-    puts("\n");
 }
 
 void entraProximoProcesso(){
@@ -94,8 +98,9 @@ void entraProximoProcesso(){
 
     printf("\n[+] Processo %d Iniciou Execucao!\n", processoAtivo->PID);
 
+    // Obtem a definicao do processo em relacao ao PID
     for(int i = 0; i < QUANT_PROCESSOS; i++){
-        if(tabelaProcessos[i]->PID_relacionado != -1 && tabelaProcessos[i]->PID_relacionado == processoAtivo->PID){
+        if(tabelaProcessos[i] != (DefinicaoProcesso*) NULL && tabelaProcessos[i]->PID_relacionado != -1 && tabelaProcessos[i]->PID_relacionado == processoAtivo->PID){
             definicaoProcessoAtivo = tabelaProcessos[i];
             return;
         }
@@ -104,58 +109,73 @@ void entraProximoProcesso(){
 
 void trataSaidasIO(){
     ListaElemento* atual = lista_io->primeiro;
-    while(atual != NULL){
+    while(atual != (ListaElemento*) NULL){
+        ListaElemento* prox = atual->proximo;
         if (atual->tempo_saida == tempo_atual){
+            printf("\n[*] Processo %d Saiu de IO!\n", atual->processo->PID);
 
-            removeElemento(lista_io, atual);
-
-            if (atual->tipo_io == DISCO){
-                removeFrente(fila_disco);
+            if (atual->tipo_io == IO_DISCO){
                 insereVerso(fila_baixa, atual->processo);
-            } else if (atual->tipo_io == FITA){
-                removeFrente(fila_fita);
+                processos_em_disco--;
+            } else if (atual->tipo_io == IO_FITA){
                 insereVerso(fila_alta, atual->processo);
-            } else {
-                removeFrente(fila_impressora);
+                processos_em_fita--;
+            } else if (atual->tipo_io == IO_IMPRESSORA){
                 insereVerso(fila_alta, atual->processo);
+                processos_em_impressora--;
             } 
 
-            printf("\n[-] Processo %d Saiu de IO!\n", atual->processo->PID);
-            atual = atual->proximo;
-            
-            //free(elemento);
-
-            
-        } else {
-            atual = atual->proximo;
-        }       
+            removeElemento(lista_io, atual);
+        }
+        atual = prox;            
     }
 }
 
-void trataEntradaIO(enum tipo_io tipo){
-    printf("\n[-] Processo %d Entrou em IO!\n", processoAtivo->PID);
-
+void trataEntradaFilaIO(enum tipo_io tipo){
+    // Verifica se o Processo Corrente Deve Entrar na Fila para IO
     if(tipo == IO_DISCO){
         insereVerso(fila_disco, processoAtivo);
-        insere(lista_io, criaElemento(tempo_atual, tempo_atual + TEMPO_DISCO, DISCO, processoAtivo));
+        printf("\n[-] Processo %d Entrou na Fila de Disco!\n", processoAtivo->PID);
     }else if(tipo == IO_FITA){
         insereVerso(fila_fita, processoAtivo);
-        insere(lista_io, criaElemento(tempo_atual, tempo_atual + TEMPO_FITA, FITA, processoAtivo));
+        printf("\n[-] Processo %d Entrou na Fila de Fita!\n", processoAtivo->PID);
     }else if(tipo == IO_IMPRESSORA){
-        insereVerso(fila_impressora, processoAtivo);
-        insere(lista_io, criaElemento(tempo_atual, tempo_atual + TEMPO_IMPRESSORA, IMPRESSORA, processoAtivo));
+        insereVerso(fila_impressora, processoAtivo);        
+        printf("\n[-] Processo %d Entrou na Fila de Impressora!\n", processoAtivo->PID);
     }
     
     processoAtivo = (Processo*) NULL;
     definicaoProcessoAtivo = (DefinicaoProcesso*) NULL;
 }
 
+void entraProximoIO(){
+    // Encontra o Proximo Processo Pronto para iniciar IO
+    if (fila_disco->tam > 0 && processos_em_disco == 0) {
+        Processo* processoIO = removeFrente(fila_disco);
+        insere(lista_io, criaElemento(tempo_atual, tempo_atual + TEMPO_DISCO, IO_DISCO, processoIO));
+        processos_em_disco++;
+        printf("\n[*] Processo %d Iniciou Disco!\n", processoIO->PID);
+    }
+    if (fila_fita->tam > 0 && processos_em_fita == 0) {
+        Processo* processoIO = removeFrente(fila_fita);
+        insere(lista_io, criaElemento(tempo_atual, tempo_atual + TEMPO_FITA, IO_FITA, processoIO));
+        processos_em_fita++;
+        printf("\n[*] Processo %d Iniciou Fita!\n", processoIO->PID);
+    }
+    if (fila_impressora->tam > 0 && processos_em_impressora == 0) {
+        Processo* processoIO = removeFrente(fila_impressora);
+        insere(lista_io, criaElemento(tempo_atual, tempo_atual + TEMPO_IMPRESSORA, IO_IMPRESSORA, processoIO));
+        processos_em_impressora++;
+        printf("\n[*] Processo %d Iniciou Impressora!\n", processoIO->PID);
+    }
+}
+
 void trataEntradaPreempcao(){
     printf("\n[-] Processo %d Entrou em Preempcao!\n", processoAtivo->PID);
 
-    // nao finalizado
     tempo_processamento_atual = 0;
     insereVerso(fila_baixa, processoAtivo);
+
     processoAtivo = (Processo*) NULL;
     definicaoProcessoAtivo = (DefinicaoProcesso*) NULL;
 }
@@ -163,30 +183,36 @@ void trataEntradaPreempcao(){
 void trataFimProcesso(){
     printf("\n[--] Processo %d Finalizado!\n", processoAtivo->PID);
 
+    for(int i = 0; i < QUANT_PROCESSOS; i++){
+        if(tabelaProcessos[i] != (DefinicaoProcesso*) NULL && tabelaProcessos[i]->PID_relacionado != -1 && tabelaProcessos[i]->PID_relacionado == processoAtivo->PID){
+            tabelaProcessos[i] = (DefinicaoProcesso*) NULL;
+        }
+    }
+
     free(processoAtivo);
     free(definicaoProcessoAtivo);
+
     processoAtivo = (Processo*) NULL;
     definicaoProcessoAtivo = (DefinicaoProcesso*) NULL;
+    
     processos_finalizados++;
 }
 
 void trataProcessoAtual(){
     //Trata Entrada em IO
+    for(int i=0; i<MAX_IO; i++){
+        if (processoAtivo == (Processo*) NULL) break;
 
-    if (processoAtivo != NULL){
-        for(int i=0; i<MAX_IO; i++){
-            if (processoAtivo == NULL) break;
-
-            if(definicaoProcessoAtivo->entradaDisco[i] == processoAtivo->tempoCorrente){
-                trataEntradaIO(IO_DISCO);
-            }else if(definicaoProcessoAtivo->entradaFita[i] == processoAtivo->tempoCorrente){
-                trataEntradaIO(IO_FITA);
-            }else if(definicaoProcessoAtivo->entradaImpressora[i] == processoAtivo->tempoCorrente){
-                trataEntradaIO(IO_IMPRESSORA);
-            }
+        if(definicaoProcessoAtivo->entradaDisco[i] == processoAtivo->tempoCorrente){
+            trataEntradaFilaIO(IO_DISCO);
+        }else if(definicaoProcessoAtivo->entradaFita[i] == processoAtivo->tempoCorrente){
+            trataEntradaFilaIO(IO_FITA);
+        }else if(definicaoProcessoAtivo->entradaImpressora[i] == processoAtivo->tempoCorrente){
+            trataEntradaFilaIO(IO_IMPRESSORA);
         }
     }
     
+    // Trata Fim de Processo e Preempcao
     if(processoAtivo != (Processo*) NULL){
         if(processoAtivo->tempoCorrente == definicaoProcessoAtivo->tempoDeServico){ 
             trataFimProcesso();
@@ -202,19 +228,36 @@ void trataProcessoAtual(){
     if(processoAtivo == (Processo*) NULL){
         entraProximoProcesso();
         tempo_processamento_atual++;
-        return;
     }
 }
 
 void printTabelaProcessos(){
-    printf("\n== Tabela de Definicoes dos Processos ==\n");
+    printf("\n== Tabela de Definicoes dos Processos ==\n\n");
 
-    printf("\n- - - - - - - - - - - - - - - - -");
     for (int i = 0; i < QUANT_PROCESSOS; i++){
+        printf("- - - - - - - - - - - - - - - - - - - - -", i+1);
+        printf("\nDefinicao #%d:\n", i+1);
         printDefinicaoProcesso(tabelaProcessos[i]);
-        printf("- - - - - - - - - - - - - - - - -");
     }
+    printf("- - - - - - - - - - - - - - - - - - - - -");
     printf("\n");
+}
+
+void printTabelaIO(){
+    ListaElemento* atual = lista_io->primeiro;
+    while(atual != (ListaElemento*) NULL){
+        printf("[%d: ", atual->processo->PID);
+
+        if(atual->tipo_io == IO_DISCO)
+            printf("DISCO");
+        else if(atual->tipo_io == IO_FITA)
+            printf("FITA");
+        else if(atual->tipo_io == IO_IMPRESSORA)
+            printf("IMPRESSORA");
+
+        printf(" de %d ate %d] ", atual->tempo_entrada, atual->tempo_saida);
+        atual = atual->proximo;       
+    }
 }
 
 void printEstadoAtual(){
@@ -231,29 +274,36 @@ void printEstadoAtual(){
         printf("Nenhuma Definicao de Processo Ativa!\n");
 
     if(fila_alta->tam > 0)
-        printf("Fila de Alta Prioridade: %d Processos com %d na Frente\n", fila_alta->tam, fila_alta->frente->processo->PID);
+        printf("Fila de Alta Prioridade: %d Processos com o processo %d na Frente\n", fila_alta->tam, fila_alta->frente->processo->PID);
     else
         printf("Fila de Alta Prioridade: %d Processos\n", fila_alta->tam);
 
     if(fila_baixa->tam > 0)
-        printf("Fila de Baixa Prioridade: %d Processos com %d na Frente\n", fila_baixa->tam, fila_baixa->frente->processo->PID);
+        printf("Fila de Baixa Prioridade: %d Processos com o processo %d na Frente\n", fila_baixa->tam, fila_baixa->frente->processo->PID);
     else
         printf("Fila de Baixa Prioridade: %d Processos\n", fila_baixa->tam);
 
     if(fila_disco->tam > 0)
-        printf("Fila de IO Disco: %d Processos com %d na Frente\n", fila_disco->tam, fila_disco->frente->processo->PID);
+        printf("Fila de IO Disco: %d Processos com o processo %d na Frente\n", fila_disco->tam, fila_disco->frente->processo->PID);
     else
         printf("Fila de IO Disco: %d Processos\n", fila_disco->tam);
 
     if(fila_fita->tam > 0)
-        printf("Fila de IO Fita: %d Processos com %d na Frente\n", fila_fita->tam, fila_fita->frente->processo->PID);
+        printf("Fila de IO Fita: %d Processos com o processo %d na Frente\n", fila_fita->tam, fila_fita->frente->processo->PID);
     else
         printf("Fila de IO Fita: %d Processos\n", fila_fita->tam);
 
     if(fila_impressora->tam > 0)
-        printf("Fila de IO Impressora: %d Processos com %d na Frente\n", fila_impressora->tam, fila_impressora->frente->processo->PID);
+        printf("Fila de IO Impressora: %d Processos com o processo %d na Frente\n", fila_impressora->tam, fila_impressora->frente->processo->PID);
     else
         printf("Fila de IO Impressora: %d Processos\n", fila_impressora->tam);
+
+    if(lista_io->size > 0 && lista_io->primeiro != NULL){
+        printf("Lista de IOs em Tratamento: ");
+        printTabelaIO();
+        printf("\n");
+    }else
+        printf("Lista de IOs em Tratamento: Vazia\n");
 
     printf("\n");
 }
@@ -267,27 +317,31 @@ int main(){
 
     printf("== Iniciando o Escalonador ==\n");
 
+    // Inicializa Filas, Lista de IO, Tabela de Definição de Processos
     inicializaEstruturas();
 
     // Mostra tabela de processos
     printTabelaProcessos();
     
     // Tratamento por Unidade de Tempo    
-    while( processos_finalizados < QUANT_PROCESSOS && tempo_atual < 100 ){
+    while( processos_finalizados < QUANT_PROCESSOS ){
         printf("\n== Inicio do Instante %d ==\n", tempo_atual);
 
         trataNovosProcessos();
         trataSaidasIO();
         trataProcessoAtual();
+        entraProximoIO();
+
         printEstadoAtual();
     
         tempo_atual++;
     }
     
-    printf("Acabou!!!\n");
     // FREE DA TABELA DE DEFINICAO DE PROCESSOS
     // FREE DAS FILAS
     // FREE DOS PROCESSOS
+
+    printf("== Termino da Execucao do Escalonador ===\n");
 
     return 0;
 
