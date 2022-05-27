@@ -6,25 +6,22 @@ typedef struct _ListaElemento {
     Processo* processo;
     struct _ListaElemento* proximo;
 } ListaElemento;
- 
+
 typedef struct _Lista {
     int size;
-    ListaElemento *primeiro;
+    ListaElemento* primeiro;
 } Lista;
 
-
-Lista* criaLista(){
+Lista* criaLista() {
     Lista* lista = (Lista*)malloc(sizeof(Lista));
     lista->primeiro = NULL;
     lista->size = 0;
     return lista;
 }
 
-void excluiListaIO(Lista* lista){
-    free(lista);
-}
+void excluiListaIO(Lista* lista) { free(lista); }
 
-ListaElemento* criaElemento(int tmp_ent, int tmp_sai, int t_io, Processo* p){
+ListaElemento* criaElemento(int tmp_ent, int tmp_sai, int t_io, Processo* p) {
     ListaElemento* elemento = (ListaElemento*)malloc(sizeof(ListaElemento));
     elemento->tempo_entrada = tmp_ent;
     elemento->tempo_saida = tmp_sai;
@@ -34,12 +31,12 @@ ListaElemento* criaElemento(int tmp_ent, int tmp_sai, int t_io, Processo* p){
     return elemento;
 }
 
-void insere(Lista* lista, ListaElemento* elemento){
-    if (lista->primeiro == NULL){
+void insere(Lista* lista, ListaElemento* elemento) {
+    if (lista->primeiro == NULL) {
         lista->primeiro = elemento;
     } else {
         ListaElemento* p = lista->primeiro;
-        while(p->proximo != NULL) {
+        while (p->proximo != NULL) {
             p = p->proximo;
         }
         p->proximo = elemento;
@@ -47,11 +44,11 @@ void insere(Lista* lista, ListaElemento* elemento){
     lista->size++;
 }
 
-ListaElemento* removeElemento(Lista* lista, ListaElemento* elemento){
+ListaElemento* removeElemento(Lista* lista, ListaElemento* elemento) {
     if (lista->primeiro == NULL) return NULL;
 
-    if (lista->primeiro->proximo == NULL){
-        if (lista->primeiro == elemento){
+    if (lista->primeiro->proximo == NULL) {
+        if (lista->primeiro == elemento) {
             free(lista->primeiro);
             lista->primeiro = NULL;
             lista->size--;
@@ -65,18 +62,18 @@ ListaElemento* removeElemento(Lista* lista, ListaElemento* elemento){
         free(lista->primeiro);
         lista->primeiro = prox;
         return prox;
-    }    
-    
+    }
+
     ListaElemento* anterior = lista->primeiro;
     ListaElemento* atual = lista->primeiro->proximo;
 
-    while(atual != elemento && atual->proximo != NULL){
+    while (atual != elemento && atual->proximo != NULL) {
         anterior = atual;
-        atual = atual->proximo;    
+        atual = atual->proximo;
     }
 
-    if (atual == elemento){
-        if (atual->proximo == NULL){
+    if (atual == elemento) {
+        if (atual->proximo == NULL) {
             anterior->proximo = NULL;
         } else {
             anterior->proximo = atual->proximo;
@@ -86,21 +83,17 @@ ListaElemento* removeElemento(Lista* lista, ListaElemento* elemento){
         free(atual);
 
         return elemento;
-    } 
-    else
+    } else
         return NULL;
-    
 }
 
-void imprimeLista(Lista* lista){
+void imprimeLista(Lista* lista) {
     ListaElemento* p = lista->primeiro;
-    while (p != NULL){
+    while (p != NULL) {
         printf("%d, %d, %d\n", p->tempo_entrada, p->tempo_saida, p->tipo_io);
         p = p->proximo;
     }
     printf("%d\n", lista->size);
 }
 
-ListaElemento* pegaPrimeiroDaLista(Lista* lista){
-    return lista->primeiro;
-}
+ListaElemento* pegaPrimeiroDaLista(Lista* lista) { return lista->primeiro; }
