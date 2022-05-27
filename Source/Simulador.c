@@ -404,7 +404,7 @@ int main()
     for (int i = 0; i < QUANT_PROCESSOS; i++)
     {
         if (tabelaProcessos[i] != NULL)
-            printf("P%d turnaround:     %d\n", i + 1, processos[tabelaProcessos[i]->PID_relacionado - 1]->tempoFinalizacao - tabelaProcessos[i]->tempoDeChegada);
+            printf("Processo %d turnaround:  %d\n", processos[i]->PID, processos[i]->tempoFinalizacao - tabelaProcessos[tabelaProcessos[i]->PID_relacionado - 1]->tempoDeChegada);
         else
             printf("nulo\n");
     }
