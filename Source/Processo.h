@@ -7,8 +7,7 @@ typedef struct _DefinicaoProcesso {
     int tempoDeChegada;
     int tempoDeServico;
 
-    // Para os tempos de entrada e saída, -1 representa não participar daquele
-    // evento
+    // Para os tempos de entrada e saída, -1 representa não participar daquele evento
     int entradaDisco[MAX_IO];
     int entradaFita[MAX_IO];
     int entradaImpressora[MAX_IO];
@@ -18,8 +17,7 @@ void printDefinicaoProcesso(DefinicaoProcesso *dp);
 int contemValorEntradas(int valor, DefinicaoProcesso *processo);
 
 DefinicaoProcesso *geraDefinicaoProcesso(int maximoChegada, int maximoServico) {
-    DefinicaoProcesso *processo =
-        (DefinicaoProcesso *)malloc(sizeof(DefinicaoProcesso));
+    DefinicaoProcesso *processo = (DefinicaoProcesso *)malloc(sizeof(DefinicaoProcesso));
 
     processo->tempoDeChegada = geraNumero(0, maximoChegada);
     processo->tempoDeServico = geraNumero(1, maximoServico);
@@ -56,8 +54,9 @@ typedef struct _Processo {
     int PID;
     int PPID;
     int status;
+	int tempoInicio;
+	int tempoFinalizacao;
     int tempoCorrente;
-    int tempoFinalizacao;
 } Processo;
 
 void printDefinicaoProcesso(DefinicaoProcesso *dp) {

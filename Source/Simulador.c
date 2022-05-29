@@ -28,15 +28,11 @@ DefinicaoProcesso *definicaoProcessoAtivo = (DefinicaoProcesso *)NULL;
 int tempo_atual = 0;                // tempo desde o inicio do escalonador
 int tempo_processamento_atual = 0;  // tempo desde o inicio do quantum atual
 int processos_criados = 0;  // quantidade de processos criados ate o momento
-int processos_finalizados =
-    0;  // quantidade de processos finalizados ate o momento
+int processos_finalizados = 0;  // quantidade de processos finalizados ate o momento
 
-int processos_em_disco =
-    0;  // quantidade de processos em estado de disco (limite de 1)
-int processos_em_fita =
-    0;  // quantidade de processos em estado de fita (limite de 1)
-int processos_em_impressora =
-    0;  // quantidade de processos em estado de impressora (limite de 1)
+int processos_em_disco = 0;  // quantidade de processos em estado de disco (limite de 1)
+int processos_em_fita = 0;  // quantidade de processos em estado de fita (limite de 1)
+int processos_em_impressora = 0;  // quantidade de processos em estado de impressora (limite de 1)
 
 // ================= FUNCOES ================= //
 
@@ -46,8 +42,7 @@ void inicializaEstruturas() {
 
     // Inicialização da Tabela de Processos
     for (int i = 0; i < QUANT_PROCESSOS; i++) {
-        tabelaProcessos[i] =
-            geraDefinicaoProcesso(MAX_CHEGADA, MAX_TEMPO_SERVICO);
+        tabelaProcessos[i] = geraDefinicaoProcesso(MAX_CHEGADA, MAX_TEMPO_SERVICO);
     }
 
     // Inicialização das Filas de Prioridade
@@ -65,15 +60,16 @@ void trataNovosProcessos() {
     // Novos Processos no Instante Atual sao Inseridos na Fila de Alta
     // Prioridade
     for (int i = 0; i < QUANT_PROCESSOS; i++) {
-        if (tabelaProcessos[i] == (DefinicaoProcesso *)NULL) continue;
+        if (tabelaProcessos[i] == (DefinicaoProcesso *) NULL) continue;
 
         if (tabelaProcessos[i]->tempoDeChegada == tempo_atual) {
-            Processo *aux = (Processo *)malloc(sizeof(Processo));
+            Processo *aux = (Processo *) malloc(sizeof(Processo));
             processos[processos_criados] = aux;
             aux->PID = ++processos_criados;
             aux->PPID = 0;
             aux->status = PRONTO;
             aux->tempoCorrente = 0;
+            aux->tempoInicio = tempo_atual;
 
             tabelaProcessos[i]->PID_relacionado = aux->PID;
 
@@ -81,7 +77,8 @@ void trataNovosProcessos() {
 
             printf(
                 "\n[++] Novo Processo %d Criado! [Relativo ao #%d da Tabela]\n",
-                processos_criados, i + 1);
+                processos_criados, i + 1
+            );
         }
     }
 }
@@ -220,7 +217,7 @@ void trataFimProcesso() {
 void trataProcessoAtual() {
     // Trata Entrada em IO
     for (int i = 0; i < MAX_IO; i++) {
-        if (processoAtivo == (Processo *)NULL) break;
+        if (processoAtivo == (Processo *) NULL) break;
 
         if (definicaoProcessoAtivo->entradaDisco[i] ==
             processoAtivo->tempoCorrente) {
@@ -235,7 +232,7 @@ void trataProcessoAtual() {
     }
 
     // Trata Fim de Processo e Preempcao
-    if (processoAtivo != (Processo *)NULL) {
+    if (processoAtivo != (Processo *) NULL) {
         if (processoAtivo->tempoCorrente ==
             definicaoProcessoAtivo->tempoDeServico) {
             trataFimProcesso();
@@ -284,37 +281,38 @@ void printTabelaIO() {
 }
 
 void printEstadoAtual() {
-    printf("\n-- Estado ao Fim do Instante %d --\n\n", tempo_atual);
+    printf("\n-- Estado Antes do Fim do Instante %d --\n\n", tempo_atual);
 
     if (processoAtivo != (Processo *)NULL)
         printf(
-            "Processo %d Ativo: [Tempo de Servico: %d] [Tempo no Quantum: "
-            "%d]\n",
+            "Processo %d Ativo: [Tempo de Servico: %d] [Tempo no Quantum: %d]\n",
             processoAtivo->PID, processoAtivo->tempoCorrente,
-            tempo_processamento_atual);
+            tempo_processamento_atual
+        );
     else
         printf("Nenhum Processo Ativo! \n");
 
     if (definicaoProcessoAtivo != (DefinicaoProcesso *)NULL)
         printf("Definicao de Processo %d Ativo: [Tempo Total de Servico: %d]\n",
-               definicaoProcessoAtivo->PID_relacionado,
-               definicaoProcessoAtivo->tempoDeServico);
+            definicaoProcessoAtivo->PID_relacionado,
+            definicaoProcessoAtivo->tempoDeServico
+        );
     else
         printf("Nenhuma Definicao de Processo Ativa!\n");
 
     if (fila_alta->tam > 0)
         printf(
-            "Fila de Alta Prioridade: %d Processos com o processo %d na "
-            "Frente\n",
-            fila_alta->tam, fila_alta->frente->processo->PID);
+            "Fila de Alta Prioridade: %d Processos com o processo %d na Frente\n",
+            fila_alta->tam, fila_alta->frente->processo->PID
+        );
     else
         printf("Fila de Alta Prioridade: %d Processos\n", fila_alta->tam);
 
     if (fila_baixa->tam > 0)
         printf(
-            "Fila de Baixa Prioridade: %d Processos com o processo %d na "
-            "Frente\n",
-            fila_baixa->tam, fila_baixa->frente->processo->PID);
+            "Fila de Baixa Prioridade: %d Processos com o processo %d na Frente\n",
+            fila_baixa->tam, fila_baixa->frente->processo->PID
+        );
     else
         printf("Fila de Baixa Prioridade: %d Processos\n", fila_baixa->tam);
 
@@ -376,15 +374,18 @@ int main() {
     // FREE DAS FILAS
     // FREE DOS PROCESSOS
 
-    printf("== Termino da Execucao do Escalonador ===\n\n");
+    printf("== Termino da Execucao do Escalonador ==\n\n");
 
     printf("== Dados dos Processos Finalizados ===\n");
     for (int i = 0; i < QUANT_PROCESSOS; i++) {
-        if (tabelaProcessos[i] != (DefinicaoProcesso *)NULL)
-            printf("Processo %d turnaround:  %d\n", processos[i]->PID,
-                   processos[i]->tempoFinalizacao -
-                       tabelaProcessos[tabelaProcessos[i]->PID_relacionado - 1]
-                           ->tempoDeChegada);
+        if (processos[i] != (Processo *) NULL)
+            printf(
+                "Processo %d turnaround:  %d - %d = %d\n", 
+                processos[i]->PID,
+                processos[i]->tempoFinalizacao,
+                processos[i]->tempoInicio,
+                processos[i]->tempoFinalizacao - processos[i]->tempoInicio
+            );
         else
             printf("nulo\n");
     }
