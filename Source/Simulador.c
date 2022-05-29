@@ -116,6 +116,7 @@ void entraProximoProcesso() {
 }
 
 void trataSaidasIO() {
+    // Verifica na lista de IO se algum processo deverá sair no instante atual
     ListaElemento *atual = lista_io->primeiro;
     while (atual != (ListaElemento *)NULL) {
         ListaElemento *prox = atual->proximo;
@@ -142,7 +143,7 @@ void trataSaidasIO() {
 }
 
 void trataEntradaFilaIO(enum tipo_io tipo) {
-    // Verifica se o Processo Corrente Deve Entrar na Fila para IO
+    // Trata para qual fila de IO deve ser inserido o processo corrente
     if (tipo == IO_DISCO) {
         insereVerso(fila_disco, processoAtivo);
         processoAtivo->status = BLOQUEADO;
@@ -336,6 +337,7 @@ void printEstadoAtual() {
 
     printf("\n");
 }
+
 
 // ================ MAIN ================ //
 

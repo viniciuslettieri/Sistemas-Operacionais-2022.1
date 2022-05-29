@@ -4,6 +4,7 @@
 
 #include "Processo.h"
 
+// Gera aleatoriamente uma linha da Tabela de Definicao de Processos com seus devidos tempos
 DefinicaoProcesso *geraDefinicaoProcesso(int maximoChegada, int maximoServico) {
     DefinicaoProcesso *processo = (DefinicaoProcesso *)malloc(sizeof(DefinicaoProcesso));
 

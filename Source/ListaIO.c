@@ -3,6 +3,7 @@
 
 #include "ListaIO.h"
 
+// Cria uma referencia para nova lista
 Lista* criaLista() {
     Lista* lista = (Lista*) malloc(sizeof(Lista));
     lista->primeiro = NULL;
@@ -10,6 +11,7 @@ Lista* criaLista() {
     return lista;
 }
 
+// Exclui uma lista da memoria
 void excluiListaIO(Lista* lista) { 
     while(removeElemento(lista, 0) != NULL) {
         continue;
@@ -17,6 +19,7 @@ void excluiListaIO(Lista* lista) {
     free(lista); 
 }
 
+// Cria um elemento de lista
 ListaElemento* criaElemento(int tmp_ent, int tmp_sai, int t_io, Processo* p) {
     ListaElemento* elemento = (ListaElemento*) malloc(sizeof(ListaElemento));
     elemento->tempo_entrada = tmp_ent;
@@ -27,6 +30,7 @@ ListaElemento* criaElemento(int tmp_ent, int tmp_sai, int t_io, Processo* p) {
     return elemento;
 }
 
+// Insere um elemento de lista
 void insere(Lista* lista, ListaElemento* elemento) {
     if (lista->primeiro == NULL) {
         lista->primeiro = elemento;
@@ -40,6 +44,7 @@ void insere(Lista* lista, ListaElemento* elemento) {
     lista->size++;
 }
 
+// Remove um elemento de lista
 ListaElemento* removeElemento(Lista* lista, ListaElemento* elemento) {
     if (lista->primeiro == NULL) return NULL;
 
