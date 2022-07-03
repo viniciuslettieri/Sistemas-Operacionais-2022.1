@@ -13,15 +13,17 @@ typedef struct _Lista {
 
 Lista* criaLista();
 
-ListaElemento* criaElemento(int pagina);
+ListaElemento* buscaElemento(Lista* lista, int pagina);
+
+ListaElemento* criaElemento(Lista*, int pagina);
 
 void insere(Lista** lista, ListaElemento* elemento);
 
 void removeElemento(Lista** lista, ListaElemento* elemento);
 
-void imprimeLista(Lista* lista);
+void removePrimeiro(Lista** lista);
 
-ListaElemento* pegaPrimeiroDaLista(Lista* lista);
+void imprimeLista(Lista* lista);
 
 int possui(Lista* lista, ListaElemento* elemento);
 

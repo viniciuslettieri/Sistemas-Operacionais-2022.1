@@ -12,17 +12,20 @@ Lista* criaLista() {
 }
 
 // Cria um elemento de lista
-ListaElemento* criaElemento(int pagina) {
-    ListaElemento* elemento = (ListaElemento*) malloc(sizeof(ListaElemento));
-    elemento->pagina = pagina;
-    elemento->proximo = NULL;
+ListaElemento* criaElemento(Lista* lista, int pagina) {
+    ListaElemento* elemento = buscaElemento(lista, pagina);
+    if (elemento == NULL) { 
+        elemento = (ListaElemento*) malloc(sizeof(ListaElemento));
+        elemento->pagina = pagina;
+        elemento->proximo = NULL;
+    }
     return elemento;
 }
 
 // Busca um elemento da lista
 ListaElemento* buscaElemento(Lista* lista, int pagina) {
     ListaElemento* p = lista->primeiro;
-    while (p->pagina != pagina) p = p->proximo;
+    while (p != NULL && p->pagina != pagina) p = p->proximo;
     
     return p;
 }
@@ -42,7 +45,11 @@ void insere(Lista** lista, ListaElemento* elemento) {
             p->proximo = elemento;
         }
 
-        (*lista)->size++;
+        if ((*lista)->size == 4) {
+            removePrimeiro(lista);
+        } else {
+            (*lista)->size++; 
+        }
     }
 }
 
@@ -50,7 +57,7 @@ void insere(Lista** lista, ListaElemento* elemento) {
 void removeElemento(Lista** lista, ListaElemento* elemento) {
     if (possui(*lista, elemento)) {
         ListaElemento* p = (*lista)->primeiro;
-        if (p == elemento) {
+        if (p->pagina == elemento->pagina) {
             (*lista)->primeiro = p->proximo;
             free(p);
         } else {
@@ -66,6 +73,11 @@ void removeElemento(Lista** lista, ListaElemento* elemento) {
     }
 }
 
+void removePrimeiro(Lista** lista) {
+    ListaElemento* p = (*lista)->primeiro;
+    (*lista)->primeiro = p->proximo;
+    free(p);
+}
 void imprimeLista(Lista* lista) {
     ListaElemento* p = lista->primeiro;
     while (p != NULL) {
@@ -81,11 +93,11 @@ int possui(Lista* lista, ListaElemento* elemento) {
     ListaElemento* p = lista->primeiro;
     if (p == NULL) return 0;
     while (p->proximo != NULL) {
-        if (p == elemento) listaPossuiElemento = 1;
+        if (p->pagina == elemento->pagina) listaPossuiElemento = 1;
         p = p->proximo;
     }
 
-    if (p == elemento) listaPossuiElemento = 1;
+    if (p->pagina == elemento->pagina) listaPossuiElemento = 1;
 
     return listaPossuiElemento;
 }
@@ -98,7 +110,7 @@ void moveElementoParaOFinal(Lista** lista, ListaElemento* elemento) {
         ListaElemento* q = p->proximo;
       
         // Se o primeiro elemento for o desejado
-        if (p == elemento) {
+        if (p->pagina == elemento->pagina) {
             (*lista)->primeiro = q;
             while (q->proximo != NULL) q = q->proximo;
             q->proximo = p;
