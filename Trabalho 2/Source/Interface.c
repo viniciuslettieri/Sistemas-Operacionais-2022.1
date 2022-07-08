@@ -55,13 +55,76 @@ void puts_centered(char const *str) {
     puts(str);
 }
 
+void print(char const *str, int *x, int *y){
+    puts(str); 
+}
+
+void println(char const *str, int *x, int *y){
+    puts(str); 
+    (*y)++; 
+    gotoxy(*x, *y);
+}
+
+void jumpline(int *x, int *y, int x_inicial, int y_inicial){
+    (*x) = x_inicial;
+    (*y)++;
+    gotoxy(*x, *y);
+}
+
+void printLRU(int x_inicial, int y_inicial) {
+    int x = x_inicial, y = y_inicial;
+    gotoxy(x, y);
+
+    println("Sequencia do LRU Geral:", &x, &y);
+    jumpline(&x, &y, x_inicial, y_inicial);
+
+    println("  1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10", &x, &y);
+}
+
+void printTabelaPagina(int x_inicial, int y_inicial, int i){
+    int x = x_inicial, y = y_inicial;
+    gotoxy(x, y);
+
+    for(int i=1; i<=50; i++){
+        printf("  X ");
+    }
+}
+
+void printTabelasPaginas(int x_inicial, int y_inicial) {
+    int x = x_inicial, y = y_inicial;
+    gotoxy(x, y);
+    
+    println("Tabelas de Paginas:", &x, &y);
+    jumpline(&x, &y, x_inicial, y_inicial);
+
+    print("  # Processo", &x, &y);   
+    int x_tabelas = x_inicial+20;
+    gotoxy(x_tabelas, y);
+    for(int i=1; i<=50; i++){
+        printf("%3d ", i);
+    }
+    jumpline(&x, &y, x_inicial, y_inicial);
+    jumpline(&x, &y, x_inicial, y_inicial);
+
+    // Imprime cada linha da tabela de paginas
+    for(int i=1; i<=20; i++){
+        printf("  %d ", i);
+        printTabelaPagina(x_tabelas, y, i);
+        jumpline(&x, &y, x_inicial, y_inicial);
+    }
+}
+
 int main(){
 
     definicoesIniciais();
 
-    puts_centered("Hello, World!");
-    gotoxy(20, 20);
-    puts("Ola Thierry");
+    puts("\n");
+    puts_centered("- Simulador de Memoria -");
+
+    printLRU(6, 6);
+    printTabelasPaginas(6, 10);
+
+    gotoxy(0, 50);
 
     return 0;
 }
