@@ -37,3 +37,8 @@ void ImprimeTabelaDePaginas(Processo* processo){
     }
     printf("\n");
 }
+
+// Verifica se duas páginas são iguais
+int Igual(Pagina* a, Pagina* b) {
+    return a->paginaID == b->paginaID && a->PID == b->PID;
+}

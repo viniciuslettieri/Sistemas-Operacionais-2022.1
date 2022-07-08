@@ -13,6 +13,7 @@ typedef struct _Pagina {
 } Pagina;
 
 typedef struct _ListaElemento {
+    struct _ListaElemento* anterior;
     Pagina* pagina;
     struct _ListaElemento* proximo;
 } ListaElemento;
@@ -39,6 +40,7 @@ void RemoveElemento(Lista** lista, ListaElemento* elemento);
 ListaElemento* RemovePrimeiro(Lista** lista);
 void ImprimeLista(Lista* lista);
 int Possui(Lista* lista, ListaElemento* elemento);
+int Igual(Pagina* a, Pagina* b);
 void MoveElementoParaOFinal(Lista** lista, ListaElemento* elemento);
 void InsereElementoNaTabelaDePaginas(Processo* processo, ListaElemento* elemento);
 void ImprimeTabelaDePaginas(Processo* processo);

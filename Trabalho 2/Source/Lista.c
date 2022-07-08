@@ -18,6 +18,7 @@ ListaElemento* CriaElemento(Lista* lista, Pagina* pagina) {
     if (elemento == NULL) {
         elemento = (ListaElemento*) malloc(sizeof(ListaElemento));
         elemento->pagina = pagina;
+        elemento->anterior = NULL;
         elemento->proximo = NULL;
     }
     return elemento;
@@ -26,7 +27,7 @@ ListaElemento* CriaElemento(Lista* lista, Pagina* pagina) {
 // Busca um elemento da lista
 ListaElemento* BuscaElemento(Lista* lista, Pagina* pagina) {
     ListaElemento* p = lista->primeiro;
-    while (p != NULL && !(p->pagina->paginaID == pagina->paginaID && p->pagina->PID == pagina->PID)) p = p->proximo;
+    while (p != NULL && !Igual(p->pagina, pagina)) p = p->proximo;
     
     return p;
 }
@@ -45,6 +46,7 @@ ListaElemento* Insere(Lista** lista, ListaElemento* elemento) {
                 p = p->proximo;
             }
             p->proximo = elemento;
+            elemento->anterior = p;
         }
 
         if ((*lista)->size == (*lista)->tamanhoMaximo) {
@@ -61,8 +63,8 @@ ListaElemento* Insere(Lista** lista, ListaElemento* elemento) {
 void RemoveElemento(Lista** lista, ListaElemento* elemento) {
     if (Possui(*lista, elemento)) {
         ListaElemento* p = (*lista)->primeiro;
-        if (p->pagina->paginaID == elemento->pagina->paginaID && p->pagina->PID == elemento->pagina->PID) {
-            (*lista)->primeiro = p->proximo;
+        if (Igual(p->pagina, elemento->pagina)) {
+            p = RemovePrimeiro(lista);
             free(p);
         } else {
             ListaElemento* q = p->proximo;
@@ -71,6 +73,7 @@ void RemoveElemento(Lista** lista, ListaElemento* elemento) {
                 q = q->proximo;
             }
             p->proximo = q->proximo;
+            if (q->proximo != NULL) q->proximo->anterior = p;
             free(q);
         }
         (*lista)->size--;
@@ -80,12 +83,32 @@ void RemoveElemento(Lista** lista, ListaElemento* elemento) {
 ListaElemento* RemovePrimeiro(Lista** lista) {
     ListaElemento* p = (*lista)->primeiro;
     (*lista)->primeiro = p->proximo;
+    (*lista)->primeiro->anterior = NULL;
     return p;
 }
+
 void ImprimeLista(Lista* lista) {
     ListaElemento* p = lista->primeiro;
     while (p != NULL) {
-        printf("(%d,%d) ", p->pagina->paginaID, p->pagina->PID);
+        if (p->anterior != NULL) printf(
+            "[%d,%d]", 
+            p->anterior->pagina->paginaID, 
+            p->anterior->pagina->PID
+        );
+        else printf("[NULL]");
+        printf(" x ");
+        printf(
+            "(%d,%d)", 
+            p->pagina->paginaID, 
+            p->pagina->PID
+        );
+        printf(" x ");
+        if (p->proximo != NULL) printf(
+            "[%d,%d]\n", 
+            p->proximo->pagina->paginaID, 
+            p->proximo->pagina->PID
+        );
+        else printf("[NULL]");
         p = p->proximo;
     }
     printf("\n\nTamanho = %d\n\n", lista->size);
@@ -97,11 +120,11 @@ int Possui(Lista* lista, ListaElemento* elemento) {
     ListaElemento* p = lista->primeiro;
     if (p == NULL) return 0;
     while (p->proximo != NULL) {
-        if (p->pagina->paginaID == elemento->pagina->paginaID && p->pagina->PID == elemento->pagina->PID) listaPossuiElemento = 1;
+        if (Igual(p->pagina, elemento->pagina)) listaPossuiElemento = 1;
         p = p->proximo;
     }
 
-    if (p->pagina->paginaID == elemento->pagina->paginaID && p->pagina->PID == elemento->pagina->PID) listaPossuiElemento = 1;
+    if (Igual(p->pagina, elemento->pagina)) listaPossuiElemento = 1;
 
     return listaPossuiElemento;
 }
@@ -114,22 +137,37 @@ void MoveElementoParaOFinal(Lista** lista, ListaElemento* elemento) {
         ListaElemento* q = p->proximo;
       
         // Se o primeiro elemento for o desejado
-        if (p->pagina->paginaID == elemento->pagina->paginaID && p->pagina->PID == elemento->pagina->PID) {
+        if (Igual(p->pagina, elemento->pagina)) {
             (*lista)->primeiro = q;
             while (q->proximo != NULL) q = q->proximo;
             q->proximo = p;
+            p->anterior = q;
         } else {
             while (q != elemento) {
                 p = p->proximo;
                 q = q->proximo;
             }
             p->proximo = q->proximo;
+            if (q->proximo != NULL) q->proximo->anterior = p;
             while (q->proximo != NULL) {
                 q = q->proximo;
             }
             q->proximo = elemento;
+            elemento->anterior = q;
         }
     }
 
     elemento->proximo = NULL;
 }
+
+// int main() {
+//     Lista* lista = CriaLista(5);
+
+//     Insere(&lista, CriaElemento(lista, CriaPagina(1, 10)));
+//     Insere(&lista, CriaElemento(lista, CriaPagina(4, 40)));
+//     Insere(&lista, CriaElemento(lista, CriaPagina(5, 50)));
+//     Insere(&lista, CriaElemento(lista, CriaPagina(2, 20)));
+//     Insere(&lista, CriaElemento(lista, CriaPagina(3, 30)));
+
+//     ImprimeLista(lista);
+// }
