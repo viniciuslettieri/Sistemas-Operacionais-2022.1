@@ -147,6 +147,8 @@ int main()
                 // Atualiza tabela de paginas do Processo que alocou a pagina
                 InsereElementoNaTabelaDePaginas(listaProcessos[PID], elemento);
             }
+
+            // sleep(1);
         }
 
         sleep(INTERVALO);
