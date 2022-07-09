@@ -6,17 +6,9 @@
 #include "Estruturas.h"
 #include "Interface.h"
 
-/*
-
-* Definir uma estrutura TabelaPaginas
-    Cada entrada possui um marcador se está na memória
-
-* Definir uma estrutura Processo
-    Processo possui uma tabela de paginas
-
-*/
-
 /* https://stackoverflow.com/questions/6127503/shuffle-array-in-c */
+/* Algoritmo usado para randomizar a ordem de alocacao dos processos */
+/* O Algoritmo mistura um vetor de inteiros de forma randomica */
 void shuffle(int *array, size_t n)
 {
     if (n > 1)
@@ -32,6 +24,14 @@ void shuffle(int *array, size_t n)
     }
 }
 
+void CriaOrdemAleatoriaDeProcessos(int *processos, size_t processosAtivos)
+{
+    for (int i = 0; i < processosAtivos; i++)
+        processos[i] = i;
+
+    shuffle(processos, processosAtivos);
+}
+
 void inserePaginaNaAreaDeSwap(Lista **areaDeSwap, ListaElemento *removido)
 {
     ListaElemento *removidoSwap = Insere(areaDeSwap, removido);
@@ -39,26 +39,22 @@ void inserePaginaNaAreaDeSwap(Lista **areaDeSwap, ListaElemento *removido)
     {
         printf("ÁREA DE SWAP ESTOROU!!!!\n");
         printf("CONSIDERE AUMENTAR A ÁREA SWAP!!!!\n");
-        return;
     }
 }
 
-void removeMemoriaPrincipal(Lista **memoriaPrincipal, ListaElemento *elementoMP)
+void removeDaMemoriaPrincipal(Lista **memoriaPrincipal, ListaElemento *elementoMP)
 {
     if (elementoMP->anterior == (ListaElemento *)NULL)
     {
-        //  caso anterior é nulo att ponteiro mp - mais antigo
         (*memoriaPrincipal)->primeiro = elementoMP->proximo;
         elementoMP->proximo->anterior = (ListaElemento *)NULL;
     }
     else if (elementoMP->proximo == (ListaElemento *)NULL)
     {
-        //  caso prox é nulo
         elementoMP->anterior->proximo = (ListaElemento *)NULL;
     }
     else
     {
-        //  caso normal
         elementoMP->anterior->proximo = elementoMP->proximo;
         elementoMP->proximo->anterior = elementoMP->anterior;
     }
@@ -82,36 +78,27 @@ int main()
     {
         if (processosAtivos < NUM_PROCESSOS)
         {
-            // CriaProcesso
             listaProcessos[processosAtivos] = CriaProcesso(processosAtivos);
             processosAtivos++;
         }
 
         int processos[processosAtivos];
-        for (int i = 0; i < processosAtivos; i++)
-        {
-            processos[i] = i;
-        }
-
-        shuffle(processos, processosAtivos);
+        CriaOrdemAleatoriaDeProcessos(processos, processosAtivos);
 
         for (int i = 0; i < processosAtivos; i++)
         {
-
             Pagina *pagina;
             int paginaID;
             int PID = processos[i];
 
             do
-            {
                 paginaID = rand() % NUM_PAGINAS_PROCESSO;
-            } while (listaProcessos[PID]->tabelaPaginas[paginaID] != (ListaElemento *)NULL);
+            while (listaProcessos[PID]->tabelaPaginas[paginaID] != (ListaElemento *)NULL);
 
             // Impressao da nossa tela do simulador
             printTela(memoriaPrincipal, listaProcessos, areaDeSwap, paginaID, PID, processosAtivos);
             // aguardaClique();
 
-            // TODO: remoção do elemento ao passo que busca por ele. Nome: BuscaERemove
             ListaElemento *elementoSwap = BuscaElemento2(areaDeSwap, paginaID, PID);
             if (elementoSwap != (ListaElemento *)NULL)
                 RemoveElemento(&areaDeSwap, elementoSwap);
@@ -148,7 +135,7 @@ int main()
 
                 // pega ponteiro da tabela de paginas da pagina a ser removida
                 ListaElemento *elementoMP = listaProcessos[PID]->tabelaPaginas[removido->pagina->paginaID];
-                removeMemoriaPrincipal(&memoriaPrincipal, elementoMP);
+                removeDaMemoriaPrincipal(&memoriaPrincipal, elementoMP);
                 // remove da tabela de paginas
                 listaProcessos[PID]->tabelaPaginas[removido->pagina->paginaID] = (ListaElemento *)NULL;
 
