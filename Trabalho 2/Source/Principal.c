@@ -109,7 +109,7 @@ int main()
 
             // Impressao da nossa tela do simulador
             printTela(memoriaPrincipal, listaProcessos, areaDeSwap, paginaID, PID, processosAtivos);
-            aguardaClique();
+            // aguardaClique();
 
             // TODO: remoção do elemento ao passo que busca por ele. Nome: BuscaERemove
             ListaElemento *elementoSwap = BuscaElemento2(areaDeSwap, paginaID, PID);
@@ -162,7 +162,7 @@ int main()
             }
         }
 
-        // sleep(INTERVALO);
+        sleep(INTERVALO);
     }
 
     return 0;
