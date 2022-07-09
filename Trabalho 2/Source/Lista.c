@@ -37,6 +37,16 @@ ListaElemento *BuscaElemento(Lista *lista, Pagina *pagina)
     return p;
 }
 
+// Busca um elemento da lista
+ListaElemento *BuscaElemento2(Lista *lista, int paginaID, int PID)
+{
+    ListaElemento *p = lista->primeiro;
+    while (p != NULL && !Igual2(p->pagina, paginaID, PID))
+        p = p->proximo;
+
+    return p;
+}
+
 // Insere um elemento de lista
 ListaElemento *Insere(Lista **lista, ListaElemento *elemento)
 {

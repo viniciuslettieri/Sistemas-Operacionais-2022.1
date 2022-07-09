@@ -32,6 +32,40 @@ void shuffle(int *array, size_t n)
     }
 }
 
+void inserePaginaNaAreaDeSwap(Lista **areaDeSwap, ListaElemento *removido)
+{
+    ListaElemento *removidoSwap = Insere(areaDeSwap, removido);
+    if (removidoSwap != (ListaElemento *)NULL)
+    {
+        printf("ÁREA DE SWAP ESTOROU!!!!\n");
+        printf("CONSIDERE AUMENTAR A ÁREA SWAP!!!!\n");
+        return;
+    }
+}
+
+void removeMemoriaPrincipal(Lista **memoriaPrincipal, ListaElemento *elementoMP)
+{
+    if (elementoMP->anterior == (ListaElemento *)NULL)
+    {
+        //  caso anterior é nulo att ponteiro mp - mais antigo
+        (*memoriaPrincipal)->primeiro = elementoMP->proximo;
+        elementoMP->proximo->anterior = (ListaElemento *)NULL;
+    }
+    else if (elementoMP->proximo == (ListaElemento *)NULL)
+    {
+        //  caso prox é nulo
+        elementoMP->anterior->proximo = (ListaElemento *)NULL;
+    }
+    else
+    {
+        //  caso normal
+        elementoMP->anterior->proximo = elementoMP->proximo;
+        elementoMP->proximo->anterior = elementoMP->anterior;
+    }
+
+    (*memoriaPrincipal)->size--;
+}
+
 int main()
 {
     definicoesIniciais();
@@ -42,10 +76,12 @@ int main()
 
     // criar memoria principal
     Lista *memoriaPrincipal = CriaLista(NUM_FRAMES);
+    Lista *areaDeSwap = CriaLista(TAM_SWAP);
 
     while (1)
     {
-        if (processosAtivos < NUM_PROCESSOS) {
+        if (processosAtivos < NUM_PROCESSOS)
+        {
             // CriaProcesso
             listaProcessos[processosAtivos] = CriaProcesso(processosAtivos);
             processosAtivos++;
@@ -61,7 +97,7 @@ int main()
 
         for (int i = 0; i < processosAtivos; i++)
         {
-            
+
             Pagina *pagina;
             int paginaID;
             int PID = processos[i];
@@ -71,10 +107,15 @@ int main()
                 paginaID = rand() % NUM_PAGINAS_PROCESSO;
             } while (listaProcessos[PID]->tabelaPaginas[paginaID] != (ListaElemento *)NULL);
 
+            // TODO: remoção do elemento ao passo que busca por ele. Nome: BuscaERemove
+            ListaElemento *elementoSwap = BuscaElemento2(areaDeSwap, paginaID, PID);
+            if (elementoSwap != (ListaElemento *)NULL)
+                RemoveElemento(&areaDeSwap, elementoSwap);
+
             pagina = CriaPagina(paginaID, PID);
             ListaElemento *elemento = CriaElemento(memoriaPrincipal, pagina);
             ListaElemento *elemento2 = CriaElemento(listaProcessos[PID]->paginasNaMemoriaPrincipal, pagina);
-            
+
             // Impressao da nossa tela do simulador
             printTela(memoriaPrincipal, listaProcessos, paginaID, PID, processosAtivos);
             aguardaClique();
@@ -83,90 +124,43 @@ int main()
             {
                 // printf("Abaixo do WORK_SET_lIMIT!!\n");
                 ListaElemento *removido = Insere(&memoriaPrincipal, elemento);
-                if (removido != NULL)
+                if (removido != (ListaElemento *)NULL)
                 {
                     int processID = removido->pagina->PID;
                     RemoveElemento(&(listaProcessos[processID]->paginasNaMemoriaPrincipal), removido);
                     listaProcessos[processID]->tabelaPaginas[removido->pagina->paginaID] = (ListaElemento *)NULL;
-                    free(removido);
 
-                    /*
-                    TODO (Thierry):
-
-                    Implementar condicao, estrutura e área de Swap
-                    */
+                    inserePaginaNaAreaDeSwap(&areaDeSwap, removido);
                 }
 
                 // Atualiza LRU do Processo que alocou a pagina
                 Insere(&(listaProcessos[PID]->paginasNaMemoriaPrincipal), elemento2);
-                // printf("LRU Processo [%d]: \n", listaProcessos[PID]->PID);
-                // ImprimeLista(listaProcessos[PID]->paginasNaMemoriaPrincipal);
 
                 // Atualiza tabela de paginas do Processo que alocou a pagina
                 InsereElementoNaTabelaDePaginas(listaProcessos[PID], elemento);
-                // ImprimeTabelaDePaginas(listaProcessos[PID]);
             }
             else
             {
-                // printf("Atingiu WORK_SET_lIMIT!!\n");
                 //  Atualiza LRU do Processo que alocou a pagina
                 ListaElemento *removido = Insere(&(listaProcessos[PID]->paginasNaMemoriaPrincipal), elemento2);
-                // printf("O \n");
-                // printf("Removido: (%d,%d)\n", removido->pagina->paginaID, removido->pagina->PID);
-                //  sabemos que ocorreu uma remoção do LRU do Processo. Então, precisamos atualizar a memoria
-                //  principal de uma forma mais especifica.
 
                 // pega ponteiro da tabela de paginas da pagina a ser removida
                 ListaElemento *elementoMP = listaProcessos[PID]->tabelaPaginas[removido->pagina->paginaID];
-
+                removeMemoriaPrincipal(&memoriaPrincipal, elementoMP);
                 // remove da tabela de paginas
                 listaProcessos[PID]->tabelaPaginas[removido->pagina->paginaID] = (ListaElemento *)NULL;
 
-                // printf("Elemento: (%d,%d)\n", elementoMP->pagina->paginaID, elementoMP->pagina->PID);
-                // printf("\niniciou\n");
-                if (elementoMP->anterior == (ListaElemento *)NULL)
-                {
-                    // printf("\n1\n");
-                    //  caso anterior é nulo att ponteiro mp - mais antigo
-                    memoriaPrincipal->primeiro = elementoMP->proximo;
-                    elementoMP->proximo->anterior = (ListaElemento *)NULL;
-                }
-                else if (elementoMP->proximo == (ListaElemento *)NULL)
-                {
-                    // printf("\n2\n");
-                    //  caso prox é nulo
-                    elementoMP->anterior->proximo = (ListaElemento *)NULL;
-                }
-                else
-                {
-                    // printf("\n3\n");
-                    //  caso normal
-                    elementoMP->anterior->proximo = elementoMP->proximo;
-                    elementoMP->proximo->anterior = elementoMP->anterior;
-                }
-
-                memoriaPrincipal->size--;
-
                 Insere(&memoriaPrincipal, elemento);
 
-                // printf("LRU Processo [%d]: \n", listaProcessos[PID]->PID);
-                // ImprimeLista(listaProcessos[PID]->paginasNaMemoriaPrincipal);
+                inserePaginaNaAreaDeSwap(&areaDeSwap, removido);
 
                 // Atualiza tabela de paginas do Processo que alocou a pagina
                 InsereElementoNaTabelaDePaginas(listaProcessos[PID], elemento);
-                // ImprimeTabelaDePaginas(listaProcessos[PID]);
             }
         }
 
-        // printf("Memoria Principal: \n");
-        // ImprimeLista(memoriaPrincipal);
-    
         // sleep(INTERVALO);
     }
-
-    /*
-        TODO (Luan): Tornar a Lista de LRU duplamente encadeada
-    */
 
     return 0;
 }
