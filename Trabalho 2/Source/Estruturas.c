@@ -37,7 +37,6 @@ void AlocaPagina(Pagina* pagina, Lista* memoriaPrincipal){
     ListaElemento *p = memoriaPrincipal->primeiro;
     while (p != NULL)
     {
-        printf("(%d)", p->pagina->frameIndex);
         if (p->pagina->frameIndex != -1)
             alocacoes[p->pagina->frameIndex] = 1;
         p = p->proximo;

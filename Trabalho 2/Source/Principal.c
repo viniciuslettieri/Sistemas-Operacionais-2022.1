@@ -107,25 +107,27 @@ int main()
                 paginaID = rand() % NUM_PAGINAS_PROCESSO;
             } while (listaProcessos[PID]->tabelaPaginas[paginaID] != (ListaElemento *)NULL);
 
+            // Impressao da nossa tela do simulador
+            printTela(memoriaPrincipal, listaProcessos, areaDeSwap, paginaID, PID, processosAtivos);
+            aguardaClique();
+
             // TODO: remoção do elemento ao passo que busca por ele. Nome: BuscaERemove
             ListaElemento *elementoSwap = BuscaElemento2(areaDeSwap, paginaID, PID);
             if (elementoSwap != (ListaElemento *)NULL)
                 RemoveElemento(&areaDeSwap, elementoSwap);
 
             pagina = CriaPagina(paginaID, PID);
-            AlocaPagina(pagina, memoriaPrincipal);
 
             ListaElemento *elemento = CriaElemento(memoriaPrincipal, pagina);                                   // LRU da memoria principal
             ListaElemento *elemento2 = CriaElemento(listaProcessos[PID]->paginasNaMemoriaPrincipal, pagina);    // LRU do processo
 
-            // Impressao da nossa tela do simulador
-            printTela(memoriaPrincipal, listaProcessos, paginaID, PID, processosAtivos);
-            aguardaClique();
 
             if (listaProcessos[PID]->paginasNaMemoriaPrincipal->size < WORK_SET_LIMIT)
             {
                 // printf("Abaixo do WORK_SET_lIMIT!!\n");
                 ListaElemento *removido = Insere(&memoriaPrincipal, elemento);
+                AlocaPagina(pagina, memoriaPrincipal);
+
                 if (removido != (ListaElemento *)NULL)
                 {
                     int processID = removido->pagina->PID;
@@ -145,7 +147,7 @@ int main()
             {
                 //  Atualiza LRU do Processo que alocou a pagina
                 ListaElemento *removido = Insere(&(listaProcessos[PID]->paginasNaMemoriaPrincipal), elemento2);
-
+                
                 // pega ponteiro da tabela de paginas da pagina a ser removida
                 ListaElemento *elementoMP = listaProcessos[PID]->tabelaPaginas[removido->pagina->paginaID];
                 removeMemoriaPrincipal(&memoriaPrincipal, elementoMP);
@@ -153,6 +155,7 @@ int main()
                 listaProcessos[PID]->tabelaPaginas[removido->pagina->paginaID] = (ListaElemento *)NULL;
 
                 Insere(&memoriaPrincipal, elemento);
+                AlocaPagina(pagina, memoriaPrincipal);
 
                 inserePaginaNaAreaDeSwap(&areaDeSwap, removido);
 

@@ -70,7 +70,28 @@ void printMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista) {
     int x = x_inicial, y = y_inicial;
     gotoxy(x, y);
     
-    println("Sequencia LRU: [Frame: Pagina do Processo]", &x, &y);
+    println("Processos em Memoria:", &x, &y);
+    jumpline(&x, &y, x_inicial, y_inicial);
+
+    ListaElemento *p = lista->primeiro;
+    x = x_inicial+2;
+    while (p != NULL){
+        int frameIndex = p->pagina->frameIndex;
+        char str_print[10];
+        
+        sprintf(str_print, "%3d", frameIndex);
+        x = x_inicial + 4*(frameIndex);
+        print(str_print, &x, &y);
+
+        p = p->proximo;
+    }
+}
+
+void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista) {
+    int x = x_inicial, y = y_inicial;
+    gotoxy(x, y);
+    
+    println("Sequencia LRU: [Frame: Pagina, Processo]", &x, &y);
     jumpline(&x, &y, x_inicial, y_inicial);
 
     ListaElemento *p = lista->primeiro;
@@ -88,27 +109,6 @@ void printMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista) {
                 p->pagina->PID);
 
         print(pagina_pid, &x, &y);
-
-        p = p->proximo;
-    }
-}
-
-void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista) {
-    int x = x_inicial, y = y_inicial;
-    gotoxy(x, y);
-    
-    println("Processos em Memoria (Na Sequencia do LRU):", &x, &y);
-    jumpline(&x, &y, x_inicial, y_inicial);
-
-    ListaElemento *p = lista->primeiro;
-    x = x_inicial+2;
-    while (p != NULL){
-        int frameIndex = p->pagina->frameIndex;
-        char str_print[10];
-        
-        sprintf(str_print, "%3d", frameIndex);
-        x = x_inicial + 4*(frameIndex);
-        print(str_print, &x, &y);
 
         p = p->proximo;
     }
@@ -164,14 +164,30 @@ void printTabelasPaginas(int x_inicial, int y_inicial, Processo *listaProcessos[
     }
 }
 
-void printSwap(int x_inicial, int y_inicial) {
+void printSwap(int x_inicial, int y_inicial, Lista* areaDeSwap) {
     int x = x_inicial, y = y_inicial;
     gotoxy(x, y);
     
-    println("Area de Swap:", &x, &y);
+    println("Area de Swap: [Pagina, Processo]", &x, &y);
     jumpline(&x, &y, x_inicial, y_inicial);
 
-    println("  1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10", &x, &y);
+    ListaElemento *p = areaDeSwap->primeiro;
+    x = x_inicial+2;
+    while (p != NULL){
+        if(x >= get_console_dimensions().X - 10){
+            x = x_inicial+2;
+            y++;
+        }
+
+        char pagina_pid[30];
+        sprintf(pagina_pid, "[%d, %d] ", 
+                p->pagina->paginaID, 
+                p->pagina->PID);
+
+        print(pagina_pid, &x, &y);
+
+        p = p->proximo;
+    }
 }
 
 void proximaSolicitacao(int x_inicial, int y_inicial, int paginaID, int PID){
@@ -188,7 +204,7 @@ void proximaSolicitacao(int x_inicial, int y_inicial, int paginaID, int PID){
     SetConsoleTextAttribute(hout, 15);
 }
 
-void printTela(Lista *memoriaPrincipal, Processo *listaProcessos[NUM_PROCESSOS], int paginaID, int PID, int processosAtivos){
+void printTela(Lista *memoriaPrincipal, Processo *listaProcessos[NUM_PROCESSOS], Lista* areaDeSwap, int paginaID, int PID, int processosAtivos){
     system("cls");
     puts("\n");
     puts_centered("- Simulador de Memoria -");
@@ -196,13 +212,13 @@ void printTela(Lista *memoriaPrincipal, Processo *listaProcessos[NUM_PROCESSOS],
     int y_delta = 6;
     proximaSolicitacao(6, y_delta, paginaID, PID);
     y_delta += 3;
-    printLRUMemoriaPrincipal(6, y_delta, memoriaPrincipal);
-    y_delta += 6;
     printMemoriaPrincipal(6, y_delta, memoriaPrincipal);
+    y_delta += 6;
+    printLRUMemoriaPrincipal(6, y_delta, memoriaPrincipal);
     y_delta += 10;
     printTabelasPaginas(6, y_delta, listaProcessos, PID, processosAtivos);
     y_delta += 6 + NUM_PROCESSOS + 1;
-    printSwap(6, y_delta);
+    printSwap(6, y_delta, areaDeSwap);
 
     gotoxy(0, 50);
 }
