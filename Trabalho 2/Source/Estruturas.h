@@ -6,6 +6,7 @@
 #define INTERVALO 3 // paginas e processos sendo criados a cada INTERVALO
 #define NUM_PROCESSOS 20
 #define WORK_SET_LIMIT 4
+#define TAM_SWAP 500
 
 typedef struct _Pagina
 {
@@ -40,6 +41,7 @@ Pagina *CriaPagina(int paginaID, int PID);
 void AlocaPagina(Pagina* pagina, Lista* memoriaPrincipal);
 Lista *CriaLista(int tamanhoMaximo);
 ListaElemento *BuscaElemento(Lista *lista, Pagina *pagina);
+ListaElemento *BuscaElemento2(Lista *lista, int paginaID, int PID);
 ListaElemento *CriaElemento(Lista *, Pagina *pagina);
 ListaElemento *Insere(Lista **lista, ListaElemento *elemento);
 void RemoveElemento(Lista **lista, ListaElemento *elemento);
@@ -47,6 +49,7 @@ ListaElemento *RemovePrimeiro(Lista **lista);
 void ImprimeLista(Lista *lista);
 int Possui(Lista *lista, ListaElemento *elemento);
 int Igual(Pagina *a, Pagina *b);
+int Igual2(Pagina *a, int paginaID, int PID);
 void MoveElementoParaOFinal(Lista **lista, ListaElemento *elemento);
 void InsereElementoNaTabelaDePaginas(Processo *processo, ListaElemento *elemento);
 void ImprimeTabelaDePaginas(Processo *processo);
