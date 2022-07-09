@@ -118,13 +118,11 @@ int main()
 
             pagina = CriaPagina(paginaID, PID);
 
-            ListaElemento *elemento = CriaElemento(memoriaPrincipal, pagina);                                   // LRU da memoria principal
-            ListaElemento *elemento2 = CriaElemento(listaProcessos[PID]->paginasNaMemoriaPrincipal, pagina);    // LRU do processo
-
+            ListaElemento *elemento = CriaElemento(memoriaPrincipal, pagina);                                // LRU da memoria principal
+            ListaElemento *elemento2 = CriaElemento(listaProcessos[PID]->paginasNaMemoriaPrincipal, pagina); // LRU do processo
 
             if (listaProcessos[PID]->paginasNaMemoriaPrincipal->size < WORK_SET_LIMIT)
             {
-                // printf("Abaixo do WORK_SET_lIMIT!!\n");
                 ListaElemento *removido = Insere(&memoriaPrincipal, elemento);
                 AlocaPagina(pagina, memoriaPrincipal);
 
@@ -147,7 +145,7 @@ int main()
             {
                 //  Atualiza LRU do Processo que alocou a pagina
                 ListaElemento *removido = Insere(&(listaProcessos[PID]->paginasNaMemoriaPrincipal), elemento2);
-                
+
                 // pega ponteiro da tabela de paginas da pagina a ser removida
                 ListaElemento *elementoMP = listaProcessos[PID]->tabelaPaginas[removido->pagina->paginaID];
                 removeMemoriaPrincipal(&memoriaPrincipal, elementoMP);
