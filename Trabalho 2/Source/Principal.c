@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "Estruturas.h"
+#include "Interface.h"
 
 /*
 
@@ -33,6 +34,7 @@ void shuffle(int *array, size_t n)
 
 int main()
 {
+    definicoesIniciais();
 
     srand(time(NULL));
     Processo *listaProcessos[NUM_PROCESSOS];
@@ -43,8 +45,7 @@ int main()
 
     while (1)
     {
-        if (processosAtivos < NUM_PROCESSOS)
-        {
+        if (processosAtivos < NUM_PROCESSOS) {
             // CriaProcesso
             listaProcessos[processosAtivos] = CriaProcesso(processosAtivos);
             processosAtivos++;
@@ -60,6 +61,7 @@ int main()
 
         for (int i = 0; i < processosAtivos; i++)
         {
+            
             Pagina *pagina;
             int paginaID;
             int PID = processos[i];
@@ -72,6 +74,10 @@ int main()
             pagina = CriaPagina(paginaID, PID);
             ListaElemento *elemento = CriaElemento(memoriaPrincipal, pagina);
             ListaElemento *elemento2 = CriaElemento(listaProcessos[PID]->paginasNaMemoriaPrincipal, pagina);
+            
+            // Impressao da nossa tela do simulador
+            printTela(memoriaPrincipal, listaProcessos, paginaID, PID, processosAtivos);
+            aguardaClique();
 
             if (listaProcessos[PID]->paginasNaMemoriaPrincipal->size < WORK_SET_LIMIT)
             {
@@ -93,8 +99,8 @@ int main()
 
                 // Atualiza LRU do Processo que alocou a pagina
                 Insere(&(listaProcessos[PID]->paginasNaMemoriaPrincipal), elemento2);
-                printf("LRU Processo [%d]: \n", listaProcessos[PID]->PID);
-                ImprimeLista(listaProcessos[PID]->paginasNaMemoriaPrincipal);
+                // printf("LRU Processo [%d]: \n", listaProcessos[PID]->PID);
+                // ImprimeLista(listaProcessos[PID]->paginasNaMemoriaPrincipal);
 
                 // Atualiza tabela de paginas do Processo que alocou a pagina
                 InsereElementoNaTabelaDePaginas(listaProcessos[PID], elemento);
@@ -143,8 +149,8 @@ int main()
 
                 Insere(&memoriaPrincipal, elemento);
 
-                printf("LRU Processo [%d]: \n", listaProcessos[PID]->PID);
-                ImprimeLista(listaProcessos[PID]->paginasNaMemoriaPrincipal);
+                // printf("LRU Processo [%d]: \n", listaProcessos[PID]->PID);
+                // ImprimeLista(listaProcessos[PID]->paginasNaMemoriaPrincipal);
 
                 // Atualiza tabela de paginas do Processo que alocou a pagina
                 InsereElementoNaTabelaDePaginas(listaProcessos[PID], elemento);
@@ -152,10 +158,10 @@ int main()
             }
         }
 
-        printf("Memoria Principal: \n");
-        ImprimeLista(memoriaPrincipal);
-
-        sleep(INTERVALO);
+        // printf("Memoria Principal: \n");
+        // ImprimeLista(memoriaPrincipal);
+    
+        // sleep(INTERVALO);
     }
 
     /*
