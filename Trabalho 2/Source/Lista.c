@@ -199,17 +199,6 @@ void MoveElementoParaOFinal(Lista **lista, ListaElemento *elemento)
         }
     }
 
-    elemento->proximo = NULL;
+    elemento->proximo = (*lista)->primeiro;
+    (*lista)->primeiro->anterior = elemento;
 }
-
-// int main() {
-//     Lista* lista = CriaLista(5);
-
-//     Insere(&lista, CriaElemento(lista, CriaPagina(1, 10)));
-//     Insere(&lista, CriaElemento(lista, CriaPagina(4, 40)));
-//     Insere(&lista, CriaElemento(lista, CriaPagina(5, 50)));
-//     Insere(&lista, CriaElemento(lista, CriaPagina(2, 20)));
-//     Insere(&lista, CriaElemento(lista, CriaPagina(3, 30)));
-
-//     ImprimeLista(lista);
-// }
