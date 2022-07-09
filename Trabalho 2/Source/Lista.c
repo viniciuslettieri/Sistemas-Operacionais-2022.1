@@ -51,6 +51,8 @@ ListaElemento *Insere(Lista **lista, ListaElemento *elemento)
         if ((*lista)->primeiro == NULL)
         {
             (*lista)->primeiro = elemento;
+            elemento->anterior = NULL;
+            elemento->proximo = NULL;
         }
         else
         {
@@ -61,6 +63,7 @@ ListaElemento *Insere(Lista **lista, ListaElemento *elemento)
             }
             p->proximo = elemento;
             elemento->anterior = p;
+            elemento->proximo = NULL;
         }
 
         if ((*lista)->size == (*lista)->tamanhoMaximo)
