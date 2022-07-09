@@ -11,6 +11,7 @@ typedef struct _Pagina
 {
     int paginaID;
     int PID;
+    int frameIndex;            // usado para identificar o frame de alocacao (ignorar nos outros locais)
 } Pagina;
 
 typedef struct _ListaElemento
@@ -36,6 +37,7 @@ typedef struct _Processo
 
 Processo *CriaProcesso(int PID);
 Pagina *CriaPagina(int paginaID, int PID);
+void AlocaPagina(Pagina* pagina, Lista* memoriaPrincipal);
 Lista *CriaLista(int tamanhoMaximo);
 ListaElemento *BuscaElemento(Lista *lista, Pagina *pagina);
 ListaElemento *CriaElemento(Lista *, Pagina *pagina);

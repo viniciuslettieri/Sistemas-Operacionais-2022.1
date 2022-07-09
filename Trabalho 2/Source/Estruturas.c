@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "Estruturas.h"
 
 int numProcessos = 0;
@@ -16,12 +17,36 @@ Processo* CriaProcesso(int PID){
 }
 
 Pagina* CriaPagina(int paginaID, int PID){
-    Pagina *pagina = (Pagina *)malloc(sizeof(Pagina));
+    Pagina *pagina = (Pagina *) malloc(sizeof(Pagina));
     
     pagina->paginaID = paginaID;
     pagina->PID = PID;
+    pagina->frameIndex = -1;
 
     return pagina;
+}
+
+void AlocaPagina(Pagina* pagina, Lista* memoriaPrincipal){
+    int alocacoes[NUM_FRAMES];
+    memset(alocacoes, 0, sizeof(alocacoes));
+
+    // Define a lista dos frames usados
+    ListaElemento *p = memoriaPrincipal->primeiro;
+    while (p != NULL)
+    {
+        printf("(%d)", p->pagina->frameIndex);
+        if (p->pagina->frameIndex != -1)
+            alocacoes[p->pagina->frameIndex] = 1;
+        p = p->proximo;
+    }
+
+    // Encontra um frame vazio
+    for(int i=0; i<NUM_FRAMES; i++){
+        if(alocacoes[i] == 0){
+            pagina->frameIndex = i;
+            return;
+        }
+    }
 }
 
 void InsereElementoNaTabelaDePaginas(Processo* processo, ListaElemento* elemento){

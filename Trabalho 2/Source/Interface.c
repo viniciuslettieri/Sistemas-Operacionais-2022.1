@@ -70,7 +70,7 @@ void printMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista) {
     int x = x_inicial, y = y_inicial;
     gotoxy(x, y);
     
-    println("Processos em Memoria (Na Sequencia do LRU):", &x, &y);
+    println("Sequencia LRU: [Frame: Pagina do Processo]", &x, &y);
     jumpline(&x, &y, x_inicial, y_inicial);
 
     ListaElemento *p = lista->primeiro;
@@ -81,11 +81,34 @@ void printMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista) {
             y++;
         }
 
-        char pagina_pid[10];
-        sprintf(pagina_pid, "(%d, %d)", p->pagina->paginaID, p->pagina->PID);
+        char pagina_pid[30];
+        sprintf(pagina_pid, "[%d: %d, %d] ", 
+                p->pagina->frameIndex, 
+                p->pagina->paginaID, 
+                p->pagina->PID);
 
         print(pagina_pid, &x, &y);
-        print(" |", &x, &y);
+
+        p = p->proximo;
+    }
+}
+
+void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista) {
+    int x = x_inicial, y = y_inicial;
+    gotoxy(x, y);
+    
+    println("Processos em Memoria (Na Sequencia do LRU):", &x, &y);
+    jumpline(&x, &y, x_inicial, y_inicial);
+
+    ListaElemento *p = lista->primeiro;
+    x = x_inicial+2;
+    while (p != NULL){
+        int frameIndex = p->pagina->frameIndex;
+        char str_print[10];
+        
+        sprintf(str_print, "%3d", frameIndex);
+        x = x_inicial + 4*(frameIndex);
+        print(str_print, &x, &y);
 
         p = p->proximo;
     }
@@ -94,26 +117,26 @@ void printMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista) {
 void printTabelaPagina(int x_inicial, int y_inicial, Processo* processo){
     int x = x_inicial, y = y_inicial;
     gotoxy(x, y);
+    
+    ListaElemento *p = processo->paginasNaMemoriaPrincipal->primeiro;
 
-    int contador_wsl = 1;
+    int contador = 0;
+    while (p != NULL){
+        int paginaID = p->pagina->paginaID;
+        char str_print[10];
 
-    for (int i = 0; i < NUM_PAGINAS_PROCESSO; i++){
-        if(processo != NULL && processo->tabelaPaginas[i] != NULL){
-            int paginaID = processo->tabelaPaginas[i]->pagina->paginaID;
-            char str_print[10];
-
-            if(contador_wsl == WORK_SET_LIMIT){
-                SetConsoleTextAttribute(hout, 14);
-            }
-            
-            sprintf(str_print, "%3d ", paginaID);
-            x = x_inicial + 4*(paginaID);
-            print(str_print, &x, &y);
-            
-            SetConsoleTextAttribute(hout, 15);
-
-            contador_wsl++;
+        if(processo->paginasNaMemoriaPrincipal->size == WORK_SET_LIMIT && contador == 0){
+            SetConsoleTextAttribute(hout, 14);
         }
+        
+        sprintf(str_print, "%3d", paginaID);
+        x = x_inicial + 4*(paginaID);
+        print(str_print, &x, &y);
+        
+        SetConsoleTextAttribute(hout, 15);
+
+        p = p->proximo;
+        contador++;
     }
 }
 
@@ -173,6 +196,8 @@ void printTela(Lista *memoriaPrincipal, Processo *listaProcessos[NUM_PROCESSOS],
     int y_delta = 6;
     proximaSolicitacao(6, y_delta, paginaID, PID);
     y_delta += 3;
+    printLRUMemoriaPrincipal(6, y_delta, memoriaPrincipal);
+    y_delta += 6;
     printMemoriaPrincipal(6, y_delta, memoriaPrincipal);
     y_delta += 10;
     printTabelasPaginas(6, y_delta, listaProcessos, PID, processosAtivos);

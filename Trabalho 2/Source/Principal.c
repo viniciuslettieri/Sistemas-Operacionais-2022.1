@@ -72,9 +72,11 @@ int main()
             } while (listaProcessos[PID]->tabelaPaginas[paginaID] != (ListaElemento *)NULL);
 
             pagina = CriaPagina(paginaID, PID);
-            ListaElemento *elemento = CriaElemento(memoriaPrincipal, pagina);
-            ListaElemento *elemento2 = CriaElemento(listaProcessos[PID]->paginasNaMemoriaPrincipal, pagina);
-            
+            AlocaPagina(pagina, memoriaPrincipal);
+
+            ListaElemento *elemento = CriaElemento(memoriaPrincipal, pagina);                                   // LRU da memoria principal
+            ListaElemento *elemento2 = CriaElemento(listaProcessos[PID]->paginasNaMemoriaPrincipal, pagina);    // LRU do processo
+
             // Impressao da nossa tela do simulador
             printTela(memoriaPrincipal, listaProcessos, paginaID, PID, processosAtivos);
             aguardaClique();
