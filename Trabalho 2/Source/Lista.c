@@ -90,25 +90,7 @@ ListaElemento* RemovePrimeiro(Lista** lista) {
 void ImprimeLista(Lista* lista) {
     ListaElemento* p = lista->primeiro;
     while (p != NULL) {
-        if (p->anterior != NULL) printf(
-            "[%d,%d]", 
-            p->anterior->pagina->paginaID, 
-            p->anterior->pagina->PID
-        );
-        else printf("[NULL]");
-        printf(" x ");
-        printf(
-            "(%d,%d)", 
-            p->pagina->paginaID, 
-            p->pagina->PID
-        );
-        printf(" x ");
-        if (p->proximo != NULL) printf(
-            "[%d,%d]\n", 
-            p->proximo->pagina->paginaID, 
-            p->proximo->pagina->PID
-        );
-        else printf("[NULL]");
+        printf("(%d,%d) ", p->pagina->paginaID, p->pagina->PID);
         p = p->proximo;
     }
     printf("\n\nTamanho = %d\n\n", lista->size);
@@ -157,17 +139,6 @@ void MoveElementoParaOFinal(Lista** lista, ListaElemento* elemento) {
         }
     }
 
-    elemento->proximo = NULL;
+    elemento->proximo = (*lista)->primeiro;
+    (*lista)->primeiro->anterior = elemento;
 }
-
-// int main() {
-//     Lista* lista = CriaLista(5);
-
-//     Insere(&lista, CriaElemento(lista, CriaPagina(1, 10)));
-//     Insere(&lista, CriaElemento(lista, CriaPagina(4, 40)));
-//     Insere(&lista, CriaElemento(lista, CriaPagina(5, 50)));
-//     Insere(&lista, CriaElemento(lista, CriaPagina(2, 20)));
-//     Insere(&lista, CriaElemento(lista, CriaPagina(3, 30)));
-
-//     ImprimeLista(lista);
-// }
