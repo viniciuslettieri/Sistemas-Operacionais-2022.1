@@ -12,9 +12,9 @@ Processo *CriaProcesso(int PID)
     processo->PID = numProcessos++;
     for (int i = 0; i < NUM_PAGINAS_PROCESSO; i++)
     {
-        processo->tabelaPaginas[i] = (ListaElemento *)NULL; // não está na memória principal
+        processo->tabelaPaginas[i] = (FilaElemento *)NULL; // não está na memória principal
     }
-    processo->paginasNaMemoriaPrincipal = CriaLista(WORK_SET_LIMIT);
+    processo->paginasNaMemoriaPrincipal = CriaFila(WORK_SET_LIMIT);
     return processo;
 }
 
@@ -29,12 +29,12 @@ Pagina *CriaPagina(int paginaID, int PID)
     return pagina;
 }
 
-void AlocaPagina(Pagina* pagina, Lista* memoriaPrincipal){
+void AlocaPagina(Pagina* pagina, Fila* memoriaPrincipal){
     int alocacoes[NUM_FRAMES];
     memset(alocacoes, 0, sizeof(alocacoes));
 
-    // Define a lista dos frames usados
-    ListaElemento *p = memoriaPrincipal->primeiro;
+    // Define a fila dos frames usados
+    FilaElemento *p = memoriaPrincipal->primeiro;
     while (p != NULL)
     {
         if (p->pagina->frameIndex != -1)
@@ -51,7 +51,7 @@ void AlocaPagina(Pagina* pagina, Lista* memoriaPrincipal){
     }
 }
 
-void InsereElementoNaTabelaDePaginas(Processo* processo, ListaElemento* elemento){
+void InsereElementoNaTabelaDePaginas(Processo* processo, FilaElemento* elemento){
     processo->tabelaPaginas[elemento->pagina->paginaID] = elemento;
 }
 

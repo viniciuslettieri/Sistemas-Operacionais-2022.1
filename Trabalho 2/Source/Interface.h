@@ -34,17 +34,17 @@ void println(char const *str, int *x, int *y);
 
 void jumpline(int *x, int *y, int x_inicial, int y_inicial);
 
-void printMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista);
+void printMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila);
 
-void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista);
+void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila);
 
 void printTabelaPagina(int x_inicial, int y_inicial, Processo* processo);
 
-void printTabelasPaginas(int x_inicial, int y_inicial, Processo *listaProcessos[NUM_PROCESSOS], int PID, int processosAtivos);
+void printTabelasPaginas(int x_inicial, int y_inicial, Processo *filaProcessos[NUM_PROCESSOS], int PID, int processosAtivos);
 
-void printSwap(int x_inicial, int y_inicial, Lista* areaDeSwap);
+void printSwap(int x_inicial, int y_inicial, Fila* areaDeSwap);
 
-void printTela(Lista *memoriaPrincipal, Processo *listaProcessos[NUM_PROCESSOS], Lista* areaDeSwap, int paginaID, int PID, int processosAtivos);
+void printTela(Fila *memoriaPrincipal, Processo *filaProcessos[NUM_PROCESSOS], Fila* areaDeSwap, int paginaID, int PID, int processosAtivos);
 
 void proximaSolicitacao(int x_inicial, int y_inicial, int paginaID, int PID);
 

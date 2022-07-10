@@ -1,5 +1,5 @@
-#ifndef LISTA_H
-#define LISTA_H
+#ifndef FILA_H
+#define FILA_H
 
 // Valores bons de testagem:
 // #define NUM_PAGINAS_PROCESSO 10
@@ -25,42 +25,42 @@ typedef struct _Pagina
     int frameIndex;                 // usado para identificar o frame de alocacao (ignorar nos outros locais)
 } Pagina;
 
-typedef struct _ListaElemento
+typedef struct _FilaElemento
 {
-    struct _ListaElemento *anterior;
+    struct _FilaElemento *anterior;
     Pagina *pagina;
-    struct _ListaElemento *proximo;
-} ListaElemento;
+    struct _FilaElemento *proximo;
+} FilaElemento;
 
-typedef struct _Lista
+typedef struct _Fila
 {
     int size;
     int tamanhoMaximo;
-    ListaElemento *primeiro;
-} Lista;
+    FilaElemento *primeiro;
+} Fila;
 
 typedef struct _Processo
 {
     int PID;
-    ListaElemento *tabelaPaginas[NUM_PAGINAS_PROCESSO];
-    Lista *paginasNaMemoriaPrincipal;
+    FilaElemento *tabelaPaginas[NUM_PAGINAS_PROCESSO];
+    Fila *paginasNaMemoriaPrincipal;
 } Processo;
 
 Processo *CriaProcesso(int PID);
 Pagina *CriaPagina(int paginaID, int PID);
-void AlocaPagina(Pagina* pagina, Lista* memoriaPrincipal);
-Lista *CriaLista(int tamanhoMaximo);
-ListaElemento *BuscaElemento(Lista *lista, Pagina *pagina);
-ListaElemento *BuscaElemento2(Lista *lista, int paginaID, int PID);
-ListaElemento *CriaElemento(Lista *, Pagina *pagina);
-ListaElemento *Insere(Lista **lista, ListaElemento *elemento);
-void RemoveElemento(Lista **lista, ListaElemento *elemento);
-ListaElemento *RemovePrimeiro(Lista **lista);
-void ImprimeLista(Lista *lista);
-int Possui(Lista *lista, ListaElemento *elemento);
+void AlocaPagina(Pagina* pagina, Fila* memoriaPrincipal);
+Fila *CriaFila(int tamanhoMaximo);
+FilaElemento *BuscaElemento(Fila *fila, Pagina *pagina);
+FilaElemento *BuscaElemento2(Fila *fila, int paginaID, int PID);
+FilaElemento *CriaElemento(Fila *, Pagina *pagina);
+FilaElemento *Insere(Fila **fila, FilaElemento *elemento);
+void RemoveElemento(Fila **fila, FilaElemento *elemento);
+FilaElemento *RemovePrimeiro(Fila **fila);
+void ImprimeFila(Fila *fila);
+int Possui(Fila *fila, FilaElemento *elemento);
 int Igual(Pagina *a, Pagina *b);
 int Igual2(Pagina *a, int paginaID, int PID);
-void MoveElementoParaOFinal(Lista **lista, ListaElemento *elemento);
-void InsereElementoNaTabelaDePaginas(Processo *processo, ListaElemento *elemento);
+void MoveElementoParaOFinal(Fila **fila, FilaElemento *elemento);
+void InsereElementoNaTabelaDePaginas(Processo *processo, FilaElemento *elemento);
 void ImprimeTabelaDePaginas(Processo *processo);
 #endif

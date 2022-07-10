@@ -78,7 +78,7 @@ void jumpline(int *x, int *y, int x_inicial, int y_inicial)
     gotoxy(*x, *y);
 }
 
-void printMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista)
+void printMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
 {
     int x = x_inicial, y = y_inicial;
     gotoxy(x, y);
@@ -88,7 +88,7 @@ void printMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista)
     SetConsoleTextAttribute(hout, COR_PADRAO);
     jumpline(&x, &y, x_inicial, y_inicial);
 
-    ListaElemento *p = lista->primeiro;
+    FilaElemento *p = fila->primeiro;
     while (p != NULL)
     {
         int frameIndex = p->pagina->frameIndex;
@@ -103,7 +103,7 @@ void printMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista)
     }
 }
 
-void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista)
+void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
 {
     int x = x_inicial, y = y_inicial;
     gotoxy(x, y);
@@ -113,7 +113,7 @@ void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Lista *lista)
     SetConsoleTextAttribute(hout, COR_PADRAO);
     jumpline(&x, &y, x_inicial, y_inicial);
 
-    ListaElemento *p = lista->primeiro;
+    FilaElemento *p = fila->primeiro;
     x = x_inicial + 2;
     while (p != NULL)
     {
@@ -140,7 +140,7 @@ void printTabelaPagina(int x_inicial, int y_inicial, Processo *processo)
     int x = x_inicial, y = y_inicial;
     gotoxy(x, y);
 
-    ListaElemento *p = processo->paginasNaMemoriaPrincipal->primeiro;
+    FilaElemento *p = processo->paginasNaMemoriaPrincipal->primeiro;
 
     int contador = 0;
     while (p != NULL)
@@ -164,7 +164,7 @@ void printTabelaPagina(int x_inicial, int y_inicial, Processo *processo)
     }
 }
 
-void printTabelasPaginas(int x_inicial, int y_inicial, Processo *listaProcessos[NUM_PROCESSOS], int PID, int processosAtivos)
+void printTabelasPaginas(int x_inicial, int y_inicial, Processo *filaProcessos[NUM_PROCESSOS], int PID, int processosAtivos)
 {
     int x = x_inicial, y = y_inicial;
     gotoxy(x, y);
@@ -187,12 +187,12 @@ void printTabelasPaginas(int x_inicial, int y_inicial, Processo *listaProcessos[
     for (int i = 0; i < processosAtivos; i++)
     {
         printf("  Processo %d ", i);
-        printTabelaPagina(x_tabelas, y, listaProcessos[i]);
+        printTabelaPagina(x_tabelas, y, filaProcessos[i]);
         jumpline(&x, &y, x_inicial, y_inicial);
     }
 }
 
-void printSwap(int x_inicial, int y_inicial, Lista *areaDeSwap)
+void printSwap(int x_inicial, int y_inicial, Fila *areaDeSwap)
 {
     int x = x_inicial, y = y_inicial;
     gotoxy(x, y);
@@ -202,7 +202,7 @@ void printSwap(int x_inicial, int y_inicial, Lista *areaDeSwap)
     SetConsoleTextAttribute(hout, COR_PADRAO);
     jumpline(&x, &y, x_inicial, y_inicial);
 
-    ListaElemento *p = areaDeSwap->primeiro;
+    FilaElemento *p = areaDeSwap->primeiro;
     x = x_inicial + 2;
     while (p != NULL)
     {
@@ -240,7 +240,7 @@ void proximaSolicitacao(int x_inicial, int y_inicial, int paginaID, int PID)
     SetConsoleTextAttribute(hout, 15);
 }
 
-void printTela(Lista *memoriaPrincipal, Processo *listaProcessos[NUM_PROCESSOS], Lista *areaDeSwap, int paginaID, int PID, int processosAtivos)
+void printTela(Fila *memoriaPrincipal, Processo *filaProcessos[NUM_PROCESSOS], Fila *areaDeSwap, int paginaID, int PID, int processosAtivos)
 {
     system("cls");
     puts("\n");
@@ -257,7 +257,7 @@ void printTela(Lista *memoriaPrincipal, Processo *listaProcessos[NUM_PROCESSOS],
     y_delta += 5;
     printLRUMemoriaPrincipal(6, y_delta, memoriaPrincipal);
     y_delta += 7;
-    printTabelasPaginas(6, y_delta, listaProcessos, PID, processosAtivos);
+    printTabelasPaginas(6, y_delta, filaProcessos, PID, processosAtivos);
     y_delta += 5 + NUM_PROCESSOS;
     printSwap(6, y_delta, areaDeSwap);
 
