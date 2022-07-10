@@ -13,6 +13,11 @@
 #define WORK_SET_LIMIT 4
 #define TAM_SWAP 500
 
+// Definicao do MODO de apresentacao
+// MODO 1 aguarda clique para cada insercao
+// MODO 2 gera insercoes para todos os processos a cada 3 segundos
+#define MODO 2
+
 typedef struct _Pagina
 {
     int paginaID;

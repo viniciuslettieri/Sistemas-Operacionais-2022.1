@@ -95,9 +95,11 @@ int main()
                 paginaID = rand() % NUM_PAGINAS_PROCESSO;
             while (listaProcessos[PID]->tabelaPaginas[paginaID] != (ListaElemento *)NULL);
 
-            // Impressao da nossa tela do simulador
-            printTela(memoriaPrincipal, listaProcessos, areaDeSwap, paginaID, PID, processosAtivos);
-            // aguardaClique();
+            // Impressao da nossa tela do simulador no MODO 1
+            if( MODO == 1 ){
+                printTela(memoriaPrincipal, listaProcessos, areaDeSwap, paginaID, PID, processosAtivos);
+                aguardaClique();
+            }
 
             ListaElemento *elementoSwap = BuscaElemento2(areaDeSwap, paginaID, PID);
             if (elementoSwap != (ListaElemento *)NULL)
@@ -151,7 +153,11 @@ int main()
             // sleep(1);
         }
 
-        sleep(INTERVALO);
+        // Impressao da tela no MODO 2
+        if( MODO == 2 ){
+            printTela(memoriaPrincipal, listaProcessos, areaDeSwap, -1, -1, processosAtivos);
+            sleep(INTERVALO);
+        }
     }
 
     return 0;

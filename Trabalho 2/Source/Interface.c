@@ -247,8 +247,12 @@ void printTela(Lista *memoriaPrincipal, Processo *listaProcessos[NUM_PROCESSOS],
     puts_centered("- Simulador de Memoria -");
 
     int y_delta = 4;
-    proximaSolicitacao(6, y_delta, paginaID, PID);
-    y_delta += 2;
+
+    if( paginaID != -1 && PID != -1 ){
+        proximaSolicitacao(6, y_delta, paginaID, PID);
+        y_delta += 2;
+    }
+    
     printMemoriaPrincipal(6, y_delta, memoriaPrincipal);
     y_delta += 5;
     printLRUMemoriaPrincipal(6, y_delta, memoriaPrincipal);
