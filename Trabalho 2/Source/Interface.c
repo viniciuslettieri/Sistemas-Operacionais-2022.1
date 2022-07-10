@@ -17,7 +17,7 @@ void definicoesIniciais()
     cci.dwSize = 25;
     cci.bVisible = FALSE;
     SetConsoleCursorInfo(hout, &cci);
-    SetConsoleTextAttribute(hout, 15);
+    SetConsoleTextAttribute(hout, COR_PADRAO);
 
     GetConsoleMode(hin, &prev_mode);
     SetConsoleMode(hin, ENABLE_EXTENDED_FLAGS | (prev_mode & ~ENABLE_QUICK_EDIT_MODE));
@@ -115,12 +115,18 @@ void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
 
     FilaElemento *p = fila->primeiro;
     x = x_inicial + 2;
+    int contador = 0;
     while (p != NULL)
     {
         if (x >= get_console_dimensions().X - 20)
         {
             x = x_inicial + 2;
             y++;
+        }
+
+        if ( fila->size == fila->tamanhoMaximo && contador == 0)
+        {
+            SetConsoleTextAttribute(hout, COR_ENFASE);
         }
 
         char pagina_pid[30];
@@ -131,7 +137,10 @@ void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
 
         print(pagina_pid, &x, &y);
 
+        SetConsoleTextAttribute(hout, COR_PADRAO);
+
         p = p->proximo;
+        contador++;
     }
 }
 
@@ -146,6 +155,7 @@ void printTabelaPagina(int x_inicial, int y_inicial, Processo *processo)
     while (p != NULL)
     {
         int paginaID = p->pagina->paginaID;
+        int frameIndex = p->pagina->frameIndex;
         char str_print[10];
 
         if (processo->paginasNaMemoriaPrincipal->size == WORK_SET_LIMIT && contador == 0)
@@ -157,7 +167,7 @@ void printTabelaPagina(int x_inicial, int y_inicial, Processo *processo)
         x = x_inicial + 4 * (paginaID);
         print(str_print, &x, &y);
 
-        SetConsoleTextAttribute(hout, 15);
+        SetConsoleTextAttribute(hout, COR_PADRAO);
 
         p = p->proximo;
         contador++;
@@ -237,7 +247,7 @@ void proximaSolicitacao(int x_inicial, int y_inicial, int paginaID, int PID)
 
     SetConsoleTextAttribute(hout, COR_ENFASE);
     print(str_print, &x, &y);
-    SetConsoleTextAttribute(hout, 15);
+    SetConsoleTextAttribute(hout, COR_PADRAO);
 }
 
 void printTela(Fila *memoriaPrincipal, Processo *filaProcessos[NUM_PROCESSOS], Fila *areaDeSwap, int paginaID, int PID, int processosAtivos)

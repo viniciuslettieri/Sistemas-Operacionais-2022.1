@@ -8,8 +8,8 @@
 
 #define NUM_PAGINAS_PROCESSO 50
 #define NUM_FRAMES 64
-#define INTERVALO 3                 // paginas e processos sendo criados a cada INTERVALO
 #define NUM_PROCESSOS 20
+#define INTERVALO 3                 // paginas e processos sendo criados a cada INTERVALO
 #define WORK_SET_LIMIT 4
 #define TAM_SWAP 500
 
