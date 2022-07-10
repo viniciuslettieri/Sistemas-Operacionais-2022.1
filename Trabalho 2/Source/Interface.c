@@ -84,7 +84,7 @@ void printMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
     gotoxy(x, y);
 
     SetConsoleTextAttribute(hout, COR_TITULO);
-    println("Processos em Memoria:", &x, &y);
+    println("Frames em Memoria:", &x, &y);
     SetConsoleTextAttribute(hout, COR_PADRAO);
     jumpline(&x, &y, x_inicial, y_inicial);
 
