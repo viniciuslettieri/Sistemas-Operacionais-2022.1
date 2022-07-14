@@ -84,23 +84,31 @@ void printMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
     gotoxy(x, y);
 
     SetConsoleTextAttribute(hout, COR_TITULO);
-    println("Frames em Memoria:", &x, &y);
+    print("Frames em Memoria:", &x, &y);
     SetConsoleTextAttribute(hout, COR_PADRAO);
-    jumpline(&x, &y, x_inicial, y_inicial);
+    //jumpline(&x, &y, x_inicial, y_inicial);
 
-    FilaElemento *p = fila->primeiro;
+    /* FilaElemento *p = fila->primeiro;
     while (p != NULL)
     {
         int frameIndex = p->pagina->frameIndex;
         char str_print[10];
 
         sprintf(str_print, "%3d", frameIndex);
-        x = (x_inicial + 2) + ((4 * (frameIndex)) % (get_console_dimensions().X - 60));
-        y = (y_inicial + 2) + ((4 * (frameIndex)) / (get_console_dimensions().X - 60));
+        x = (x_inicial + 2) + ((3 * (frameIndex)) % (get_console_dimensions().X - 60));
+        y = (y_inicial + 2) + ((3 * (frameIndex)) / (get_console_dimensions().X - 60));
         print(str_print, &x, &y);
 
         p = p->proximo;
+    } */
+    char str_print[10];
+    
+    if (fila->size > 1) {
+        sprintf(str_print, "%3d  ... %3d", 0, fila->size-1);
+    } else {
+        sprintf(str_print, "%3d", 0);
     }
+    print(str_print, &x, &y);
 }
 
 void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
@@ -109,7 +117,7 @@ void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
     gotoxy(x, y);
 
     SetConsoleTextAttribute(hout, COR_TITULO);
-    println("Sequencia LRU: [Frame: Pagina, Processo]", &x, &y);
+    println("Sequencia LRU: [Frame: Pagina,Processo]", &x, &y);
     SetConsoleTextAttribute(hout, COR_PADRAO);
     jumpline(&x, &y, x_inicial, y_inicial);
 
@@ -130,7 +138,7 @@ void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
         }
 
         char pagina_pid[30];
-        sprintf(pagina_pid, "[%d: %d, %d] ",
+        sprintf(pagina_pid, "[%d: %d,%d] ",
                 p->pagina->frameIndex,
                 p->pagina->paginaID,
                 p->pagina->PID);
@@ -164,7 +172,7 @@ void printTabelaPagina(int x_inicial, int y_inicial, Processo *processo)
         }
 
         sprintf(str_print, "%3d", paginaID);
-        x = x_inicial + 4 * (paginaID);
+        x = x_inicial + 3 * (paginaID);
         print(str_print, &x, &y);
 
         SetConsoleTextAttribute(hout, COR_PADRAO);
@@ -180,15 +188,15 @@ void printTabelasPaginas(int x_inicial, int y_inicial, Processo *filaProcessos[N
     gotoxy(x, y);
 
     SetConsoleTextAttribute(hout, COR_TITULO);
-    println("Tabelas de Paginas:", &x, &y);
+    print("Tabelas de Paginas:", &x, &y);
     SetConsoleTextAttribute(hout, COR_PADRAO);
-    jumpline(&x, &y, x_inicial, y_inicial);
+    //jumpline(&x, &y, x_inicial, y_inicial);
 
     int x_tabelas = x_inicial + 20;
     gotoxy(x_tabelas, y);
     for (int i = 0; i < NUM_PAGINAS_PROCESSO; i++)
     {
-        printf("%3d ", i);
+        printf("%3d", i);
     }
     jumpline(&x, &y, x_inicial, y_inicial);
     jumpline(&x, &y, x_inicial, y_inicial);
@@ -208,7 +216,7 @@ void printSwap(int x_inicial, int y_inicial, Fila *areaDeSwap)
     gotoxy(x, y);
 
     SetConsoleTextAttribute(hout, COR_TITULO);
-    println("Area de Swap: [Pagina, Processo]", &x, &y);
+    println("Area de Swap: [Pagina,Processo]", &x, &y);
     SetConsoleTextAttribute(hout, COR_PADRAO);
     jumpline(&x, &y, x_inicial, y_inicial);
 
@@ -223,7 +231,7 @@ void printSwap(int x_inicial, int y_inicial, Fila *areaDeSwap)
         }
 
         char pagina_pid[30];
-        sprintf(pagina_pid, "[%d, %d] ",
+        sprintf(pagina_pid, "[%d,%d] ",
                 p->pagina->paginaID,
                 p->pagina->PID);
 
@@ -253,10 +261,10 @@ void proximaSolicitacao(int x_inicial, int y_inicial, int paginaID, int PID)
 void printTela(Fila *memoriaPrincipal, Processo *filaProcessos[NUM_PROCESSOS], Fila *areaDeSwap, int paginaID, int PID, int processosAtivos)
 {
     system("cls");
-    puts("\n");
+    //puts("\n");
     puts_centered("- Simulador de Memoria -");
 
-    int y_delta = 4;
+    int y_delta = 0;
 
     if( paginaID != -1 && PID != -1 ){
         proximaSolicitacao(6, y_delta, paginaID, PID);
@@ -264,11 +272,11 @@ void printTela(Fila *memoriaPrincipal, Processo *filaProcessos[NUM_PROCESSOS], F
     }
     
     printMemoriaPrincipal(6, y_delta, memoriaPrincipal);
-    y_delta += 5;
+    y_delta += 2;
     printLRUMemoriaPrincipal(6, y_delta, memoriaPrincipal);
-    y_delta += 7;
+    y_delta += 8;
     printTabelasPaginas(6, y_delta, filaProcessos, PID, processosAtivos);
-    y_delta += 5 + NUM_PROCESSOS;
+    y_delta += 3 + NUM_PROCESSOS;
     printSwap(6, y_delta, areaDeSwap);
 
     gotoxy(0, 50);
