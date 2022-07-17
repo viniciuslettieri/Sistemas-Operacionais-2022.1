@@ -86,9 +86,14 @@ void printMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
     SetConsoleTextAttribute(hout, COR_TITULO);
     print("Frames em Memoria:", &x, &y);
     SetConsoleTextAttribute(hout, COR_PADRAO);
-    //jumpline(&x, &y, x_inicial, y_inicial);
 
-    /* FilaElemento *p = fila->primeiro;
+    /*
+
+    CASO DESEJE MOSTRAR TODOS OS FRAMES TROQUE ESSE CODIGO PELO QUE VEM EM SEGUIDA!
+    
+    jumpline(&x, &y, x_inicial, y_inicial);
+
+    FilaElemento *p = fila->primeiro;
     while (p != NULL)
     {
         int frameIndex = p->pagina->frameIndex;
@@ -100,13 +105,22 @@ void printMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
         print(str_print, &x, &y);
 
         p = p->proximo;
-    } */
+    } 
+    
+    */
+
+    // COMO NA TAREFA SEMPRE ENTRARÃO NOVOS FRAMES EM MEMÓRIA, MESMO COM OS ANTERIORES SAINDO, 
+    // NUNCA HAVERÁ SITUAÇÃO COM "BURACOS" NA SEQUENCIA.
+    // SENDO ASSIM SIMPLIFICAMOS A VISUALIZAÇÃO POR MOTIVOS DE APRESENTACAO, 
+    // MOSTRANDO APENAS O INDICE INICIAL E FINAL DOS FRAMES EM MEMORIA.
+    // O CODIGO COMENTADO A CIMA FAZ A DEMONSTRACAO COMPLETA DE TODOS OS FRAMES.
+
     char str_print[10];
     
     if (fila->size > 1) {
-        sprintf(str_print, "%3d  ... %3d", 0, fila->size-1);
+        sprintf(str_print, " %d ... %d", 0, fila->size-1);
     } else {
-        sprintf(str_print, "%3d", 0);
+        sprintf(str_print, " %d", 0);
     }
     print(str_print, &x, &y);
 }
@@ -117,7 +131,7 @@ void printLRUMemoriaPrincipal(int x_inicial, int y_inicial, Fila *fila)
     gotoxy(x, y);
 
     SetConsoleTextAttribute(hout, COR_TITULO);
-    println("Sequencia LRU: [Frame: Pagina,Processo]", &x, &y);
+    println("Sequencia LRU: [Frame: Pagina, Processo]", &x, &y);
     SetConsoleTextAttribute(hout, COR_PADRAO);
     jumpline(&x, &y, x_inicial, y_inicial);
 
@@ -264,7 +278,7 @@ void printTela(Fila *memoriaPrincipal, Processo *filaProcessos[NUM_PROCESSOS], F
     //puts("\n");
     puts_centered("- Simulador de Memoria -");
 
-    int y_delta = 0;
+    int y_delta = 1;
 
     if( paginaID != -1 && PID != -1 ){
         proximaSolicitacao(6, y_delta, paginaID, PID);
