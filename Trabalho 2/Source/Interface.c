@@ -264,7 +264,7 @@ void printTela(Fila *memoriaPrincipal, Processo *filaProcessos[NUM_PROCESSOS], F
     //puts("\n");
     puts_centered("- Simulador de Memoria -");
 
-    int y_delta = 0;
+    int y_delta = 2;
 
     if( paginaID != -1 && PID != -1 ){
         proximaSolicitacao(6, y_delta, paginaID, PID);

@@ -109,12 +109,15 @@ int main()
 
             FilaElemento *elemento = CriaElemento(memoriaPrincipal, pagina);                                // LRU da memoria principal
             FilaElemento *elemento2 = CriaElemento(filaProcessos[PID]->paginasNaMemoriaPrincipal, pagina); // LRU do processo
-
+            
+            // Caso o processo não tenha atingido seu working set limit
             if (filaProcessos[PID]->paginasNaMemoriaPrincipal->size < WORK_SET_LIMIT)
             {
+                // Insere o elemento na memoria principal e recebe alguem que possa ter sido removido
                 FilaElemento *removido = Insere(&memoriaPrincipal, elemento);
                 AlocaPagina(pagina, memoriaPrincipal);
 
+                // Caso tenha removido alguem devido a overflow na memoria principal
                 if (removido != (FilaElemento *)NULL)
                 {
                     int processID = removido->pagina->PID;
@@ -132,19 +135,22 @@ int main()
             }
             else
             {
-                //  Atualiza LRU do Processo que alocou a pagina
+                // Atualiza LRU do Processo que alocou a pagina
                 FilaElemento *removido = Insere(&(filaProcessos[PID]->paginasNaMemoriaPrincipal), elemento2);
 
-                // pega ponteiro da tabela de paginas da pagina a ser removida
+                // pega ponteiro da tabela de paginas da pagina a ser removido da memoria principal
                 FilaElemento *elementoMP = filaProcessos[PID]->tabelaPaginas[removido->pagina->paginaID];
                 removeDaMemoriaPrincipal(&memoriaPrincipal, elementoMP);
                 // remove da tabela de paginas
                 filaProcessos[PID]->tabelaPaginas[removido->pagina->paginaID] = (FilaElemento *)NULL;
 
+                // Insere o elemento na Memoria Principal
                 Insere(&memoriaPrincipal, elemento);
                 AlocaPagina(pagina, memoriaPrincipal);
 
-                inserePaginaNaAreaDeSwap(&areaDeSwap, removido);
+                if(memoriaPrincipal->size == memoriaPrincipal->tamanhoMaximo){
+                    inserePaginaNaAreaDeSwap(&areaDeSwap, removido);
+                }
 
                 // Atualiza tabela de paginas do Processo que alocou a pagina
                 InsereElementoNaTabelaDePaginas(filaProcessos[PID], elemento);

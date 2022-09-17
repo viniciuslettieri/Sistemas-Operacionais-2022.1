@@ -2,21 +2,21 @@
 #define FILA_H
 
 // Valores bons de testagem:
-// #define NUM_PAGINAS_PROCESSO 10
-// #define NUM_FRAMES 20
-// #define NUM_PROCESSOS 5
+#define NUM_PAGINAS_PROCESSO 12
+#define NUM_FRAMES 30
+#define NUM_PROCESSOS 6
 
-#define NUM_PAGINAS_PROCESSO 50
-#define NUM_FRAMES 64
-#define NUM_PROCESSOS 20
+// #define NUM_PAGINAS_PROCESSO 50
+// #define NUM_FRAMES 64
+// #define NUM_PROCESSOS 20
 #define INTERVALO 3                 // paginas e processos sendo criados a cada INTERVALO
-#define WORK_SET_LIMIT 4
+#define WORK_SET_LIMIT 6
 #define TAM_SWAP 500
 
 // Definicao do MODO de apresentacao
 // MODO 1 aguarda clique para cada insercao
 // MODO 2 gera insercoes para todos os processos a cada 3 segundos
-#define MODO 2
+#define MODO 1
 
 typedef struct _Pagina
 {
